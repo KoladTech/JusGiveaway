@@ -1,0 +1,190 @@
+﻿<!--<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HeadsOrTails.MainPage"
+             BackgroundColor="LightGray">
+
+    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Spacing="20">
+
+        <Label x:Name="TotalPossibleWinningsLabel" Text="Maximum win : N5000" HorizontalOptions="Center" />
+        <Button x:Name="ResetButton" Text="Reset Game" Clicked="OnResetClicked" HorizontalOptions="Center" IsVisible="false" />
+
+        --><!-- Side Selection Section --><!--
+        <StackLayout x:Name="SideSelectionLayout" Spacing="20" HorizontalOptions="Center">
+            <Label x:Name="UserChoiceLabel" Text="Choose Heads or Tails" HorizontalOptions="Center" />
+
+            <StackLayout Orientation="Horizontal" Spacing="20" HorizontalOptions="Center">
+                <Image x:Name="CoinFrontImage" Source="kobo_front.png" WidthRequest="100" HeightRequest="100">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnChooseHeadsTapped" />
+                    </Image.GestureRecognizers>
+                </Image>
+
+                <Image x:Name="CoinBackImage" Source="kobo_back.png" WidthRequest="100" HeightRequest="100">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnChooseTailsTapped" />
+                    </Image.GestureRecognizers>
+                </Image>
+            </StackLayout>
+
+            <Button x:Name="SelectionButton" Text="Lock In Choice" Clicked="OnLockInSelectionClicked" HorizontalOptions="Center" IsEnabled="False" />
+        </StackLayout>
+
+        --><!-- Coin Flip Section --><!--
+        <StackLayout x:Name="FlipLayout" Orientation="Vertical" Spacing="20" IsVisible="false">
+            <Image x:Name="CoinImage" Source="kobo_front.png" WidthRequest="100" HeightRequest="100">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCoinTapped" />
+                </Image.GestureRecognizers>
+            </Image>
+            <Label x:Name="TotalLabel" Text="Total Flips: 0" HorizontalOptions="Center" Margin="0,20"/>
+
+            <StackLayout Orientation="Horizontal" Spacing="20" HorizontalOptions="Center">
+                <StackLayout VerticalOptions="CenterAndExpand">
+                    <Label x:Name="HeadsProgressBarLabel" Text="Heads" HorizontalOptions="Center"/>
+                    <ProgressBar x:Name="HeadsProgressBar" Progress="0" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" ProgressColor="Green" />
+                    <Label x:Name="HeadsPercentageLabel" VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
+
+                <StackLayout VerticalOptions="CenterAndExpand">
+                    <Label x:Name="TailsProgressBarLabel" Text="Tails" HorizontalOptions="Center"/>
+                    <ProgressBar x:Name="TailsProgressBar" Progress="0" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" ProgressColor="Orange" />
+                    <Label x:Name="TailsPercentageLabel" VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
+            </StackLayout>
+
+            <Label x:Name="ScoreLabel" Text="Score: 0" HorizontalTextAlignment="Center" />
+
+            <Label x:Name="PotentialWinningLabel" Text="Potential Cash: N0" HorizontalTextAlignment="Center" />
+            
+        </StackLayout>
+    </StackLayout>
+
+</ContentPage>-->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HeadsOrTails.MainPage"
+             BackgroundColor="black">
+    <Grid>
+        <Image Source="mint_green_bckg.jpg" Aspect="AspectFill" Opacity="0.8" />
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Style for the Entry control -->
+            <Style x:Key="EntryStyle" TargetType="Entry">
+                <Setter Property="BackgroundColor" Value="#F0F0F0" />
+                <Setter Property="TextColor" Value="#333333" />
+                <Setter Property="PlaceholderColor" Value="#5C5C5C" />
+                <Setter Property="Placeholder" Value="Enter your name" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="Margin" Value="20,10" />
+                <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Padding="20">
+        
+        <Label Text="Total Global Funds" FontSize="20" HorizontalOptions="Center" />
+        <Label x:Name="NationalFundsTotalLabel" Text="N1,000,000" FontSize="23" FontAttributes="Bold" HorizontalOptions="Center" Padding="20"/>
+
+        <!-- Title Section -->
+        <StackLayout x:Name="Titlelayout" Orientation="Vertical" HorizontalOptions="FillAndExpand"  VerticalOptions="Start">
+
+            <StackLayout x:Name="UserChoiceLayout" HorizontalOptions="CenterAndExpand">
+                <Label x:Name="UserChoiceLabel" Text="Heads or Tails" FontSize="22" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Image x:Name="UserChoiceImage" Source="kobo_front.png" HeightRequest="100" WidthRequest="100" HorizontalOptions="Center" />
+            </StackLayout>
+
+            <StackLayout x:Name="ResetButtonLayout" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                <Button x:Name="ResetButton" Text="Reset Game" Clicked="OnResetClicked" 
+                        FontSize="16" HorizontalOptions="Center" IsVisible="false"
+                        CornerRadius="20" Padding="30" TextColor="Black"
+                        BackgroundColor="#468fa2"/>
+            </StackLayout>
+
+        </StackLayout>
+
+        <!--This gets added to the title section above programatically-->
+        
+
+        <!-- Information Section -->
+        <StackLayout x:Name="InformationLayout" HorizontalOptions="CenterAndExpand" VerticalOptions="Start" Padding="20" IsVisible="false">
+            <Label x:Name="TotalPossibleWinningsLabel" Text="Maximum Win : N5000" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" />
+            <Label x:Name="PotentialWinningLabel" Text="Current Winnings: N0" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" />
+            <Label Text="Instructions: Tap the coin to flip" FontSize="16" HorizontalOptions="Center" />
+        </StackLayout>
+
+
+        <!-- Game Section -->
+        <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Spacing="20">
+
+            <Entry Style="{StaticResource EntryStyle}" x:Name="NameEntry" Placeholder="Enter your name" />
+
+
+            <!-- Side Selection Section -->
+            <StackLayout x:Name="SideSelectionLayout" Spacing="20" HorizontalOptions="CenterAndExpand">
+                <Label Text="Choose Heads or Tails" FontSize="18" HorizontalOptions="Center" />
+                <StackLayout Orientation="Horizontal" Spacing="20" HorizontalOptions="Center">
+                    <Image x:Name="CoinFrontImage" Source="kobo_front.png" HeightRequest="100" WidthRequest="100" Aspect="AspectFill">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnChooseHeadsTapped" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                    <Image x:Name="CoinBackImage" Source="kobo_back.png" HeightRequest="100" WidthRequest="100" Aspect="AspectFill">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnChooseTailsTapped" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
+                <Button x:Name="SelectionButton" Text="Confam" Clicked="OnLockInSelectionClicked" HorizontalOptions="Center" IsEnabled="False" 
+                         FontSize="20" CornerRadius="20" Padding="30" BackgroundColor="#00bfff"/>
+            </StackLayout>
+
+            <!-- Coin Flip Section -->
+            <StackLayout x:Name="CoinFlipLayout" Orientation="Vertical" Spacing="20" IsVisible="false">
+                <Image x:Name="CoinImage" Source="kobo_front.png" HeightRequest="120" WidthRequest="120" Aspect="AspectFill">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCoinTapped" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Label x:Name="TotalLabel" Text="Total Flips: 0" FontSize="16" HorizontalOptions="Center" />
+
+                <StackLayout Orientation="Horizontal" Spacing="20" HorizontalOptions="Center">
+                    <StackLayout VerticalOptions="CenterAndExpand">
+                        <Label x:Name="HeadsProgressBarLabel" Text="Heads" FontSize="14" HorizontalOptions="Center"/>
+                        <ProgressBar x:Name="HeadsProgressBar" Progress="0" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" ProgressColor="Green" />
+                        <Label x:Name="HeadsPercentageLabel" FontSize="14" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+
+                    <StackLayout VerticalOptions="CenterAndExpand">
+                        <Label x:Name="TailsProgressBarLabel" Text="Tails" FontSize="14" HorizontalOptions="Center"/>
+                        <ProgressBar x:Name="TailsProgressBar" Progress="0" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" ProgressColor="Orange" />
+                        <Label x:Name="TailsPercentageLabel" FontSize="14" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                </StackLayout>
+
+                <Label x:Name="ScoreLabel" Text="Score: 0" FontSize="16" HorizontalOptions="Center" />
+
+                <Button x:Name="CashOutButton" Text="Cash Out" Clicked="OnCashOutClicked" FontSize="16" HorizontalOptions="Center" IsEnabled="false" 
+                        CornerRadius="20" BackgroundColor="Green" BorderWidth="2" Padding="30"/>
+
+                <Frame BackgroundColor="Green"
+                   CornerRadius="20"
+                   Padding="10"
+                   Margin="20">
+                    <Button Text="Cash Out"
+                        TextColor="Black"
+                        FontSize="16"
+                        BackgroundColor="Transparent"
+                        CornerRadius="20"
+                        BorderColor="Green"
+                        BorderWidth="2"
+                        Clicked="OnCashOutClicked"/>
+                </Frame>
+
+
+            </StackLayout>
+        </StackLayout>
+    </StackLayout>
+    </Grid>
+</ContentPage>
