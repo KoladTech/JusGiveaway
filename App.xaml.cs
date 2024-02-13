@@ -38,16 +38,17 @@ namespace HeadsOrTails
             // Store data in Application Properties
             if (Application.Current != null)
             {
-                GameData currentGameState = new();
-
-                currentGameState.ID = (int)Application.Current.Resources["ID"];
-                currentGameState.PlayerName = (string)Application.Current.Resources["PlayerName"];
-                currentGameState.PlayingHeads = (int)Application.Current.Resources["PlayingHeads"];
-                currentGameState.HeadsCount = (int)Current.Resources["HeadsCount"];
-                currentGameState.TailsCount = (int)Application.Current.Resources["TailsCount"];
-                currentGameState.MaxPossibleWinnings = (int)Application.Current.Resources["MaxPossibleWinnings"];
-                currentGameState.CurrentWinnings = (int)Application.Current.Resources["CurrentWinnings"];
-                currentGameState.TotalResetsUsed = (int)Application.Current.Resources["TotalResetsUsed"];
+                GameData currentGameState = new()
+                {
+                    ID = (int)Application.Current.Resources["ID"],
+                    PlayerName = (string)Application.Current.Resources["PlayerName"],
+                    PlayingHeads = (int)Application.Current.Resources["PlayingHeads"],
+                    HeadsCount = (int)Current.Resources["HeadsCount"],
+                    TailsCount = (int)Application.Current.Resources["TailsCount"],
+                    MaxPossibleWinnings = (int)Application.Current.Resources["MaxPossibleWinnings"],
+                    CurrentWinnings = (int)Application.Current.Resources["CurrentWinnings"],
+                    TotalResetsUsed = (int)Application.Current.Resources["TotalResetsUsed"]
+                };
 
                 dbHelper.UpdateItem(currentGameState);
             }

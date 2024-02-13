@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HeadsOrTails.CustomAlertPage"
+             Title="CustomAlertPage"
+             BackgroundColor="Transparent">
+    <!-- Content of your modal alert -->
+    <ContentView BackgroundColor="Transparent" Padding="20" VerticalOptions="Center">
+        <Frame CornerRadius="10" BackgroundColor="White" Padding="20">
+            <StackLayout>
+                <Label Text="{Binding Title}" FontSize="20" HorizontalOptions="Center" Margin="0,0,0,10"/>
+                <Label Text="{Binding Message}" FontSize="16" HorizontalOptions="Center" Margin="0,0,0,20"/>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
+                    <Button Text="{Binding Yes}" Clicked="OnYesClicked" IsVisible="{Binding ShowYes}" />
+                    <Button Text="{Binding No}" Clicked="OnNoClicked" IsVisible="{Binding ShowNo}" />
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+    </ContentView>
+</ContentPage>
