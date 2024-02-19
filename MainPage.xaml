@@ -71,27 +71,6 @@
     <Grid>
         <Image Source="mint_green_bckg.jpg" Aspect="AspectFill" Opacity="0.8" />
 
-        <ContentPage.Resources>
-            <ResourceDictionary>
-                <!-- Style for the Entry control -->
-                <Style x:Key="EntryStyle" TargetType="Entry">
-                    <Setter Property="BackgroundColor" Value="Transparent" />
-                    <Setter Property="TextColor" Value="#333333" />
-                    <Setter Property="PlaceholderColor" Value="#5C5C5C" />
-                    <Setter Property="Placeholder" Value="Enter your name" />
-                    <Setter Property="HeightRequest" Value="40" />
-                    <Setter Property="Margin" Value="20,10" />
-                    <Setter Property="HorizontalOptions" Value="FillAndExpand" />
-                </Style>
-
-                <Style x:Key="FrameStyle" TargetType="Frame">
-                    <Setter Property="BackgroundColor" Value="#F0F0F0" />
-                    <Setter Property="CornerRadius" Value="20" />
-                    <Setter Property="Padding" Value="0" />
-                </Style>
-            </ResourceDictionary>
-        </ContentPage.Resources>
-
         <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Padding="20">
 
             <!--<Label Text="Total Global Funds" FontSize="20" HorizontalOptions="Center" />
@@ -133,9 +112,25 @@
                     <Entry Style="{StaticResource EntryStyle}" x:Name="NameEntry" Placeholder="Enter your username" MaxLength="10" TextChanged="OnUserNameTextChanged"/>
                 </Frame>
                 <Frame x:Name="PhoneNumberEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
-                    <Entry Style="{StaticResource EntryStyle}" x:Name="PhoneNumberEntry" Placeholder="Last 5 digits of #" MaxLength="5" TextChanged="OnPhoneNumberTextChanged"/>
+                    <Entry Style="{StaticResource EntryStyle}" x:Name="PhoneNumberEntry" Placeholder="Last 5 digits of #" MaxLength="11" TextChanged="OnPhoneNumberTextChanged"/>
                 </Frame>
 
+                <Frame   x:Name="RegisterButtonFrame"
+                    BackgroundColor="#468fa2"
+                    CornerRadius="20"
+                    Padding="10"
+                    Margin="20"
+                    IsVisible="False">
+                    <Button  x:Name="RegisterButton"
+                        Text="Register"
+                        TextColor="Black"
+                        FontSize="16"
+                        BackgroundColor="Transparent"
+                        CornerRadius="20"
+                        BorderColor="#468fa2"
+                        BorderWidth="2"
+                        Clicked="OnLockInSelectionClicked"/>
+                </Frame>
 
                 <!-- Side Selection Section -->
                 <StackLayout x:Name="SideSelectionLayout" Spacing="20" HorizontalOptions="CenterAndExpand">

@@ -14,7 +14,7 @@ namespace HeadsOrTails
 
 
         public SQLiteDBHelper()
-        {            
+        {
             dbConnection = new SQLiteConnection(DbPath);
 
             var dbConnectionLoc = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal));
@@ -90,6 +90,22 @@ namespace HeadsOrTails
                 // Handle any exceptions or errors
                 Console.WriteLine("Error: " + ex.Message);
                 return null; // Return null or handle the error as needed
+            }
+        }
+
+        public bool GetHasSelectedSidesOfMaxID()
+        {
+            try
+            {
+
+                string query = "SELECT SelectedSides FROM GameData WHERE ID = (SELECT MAX(ID) FROM GameData)";
+                var result = dbConnection.ExecuteScalar<int>(query);
+                return (result == 1);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                return false;
             }
         }
     }

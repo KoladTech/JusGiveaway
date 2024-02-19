@@ -10,6 +10,20 @@ namespace HeadsOrTails
         {
             InitializeComponent();
 
+            //// Check if the user has already registered
+            //bool isRegistered = CheckRegistrationStatus();
+
+            //if (!isRegistered)
+            //{
+            //    // If not registered, navigate to the registration page
+            //    MainPage = new NavigationPage(new RegistrationPage());
+            //}
+            //else
+            //{
+            //    // If registered, navigate to the main page
+            //    MainPage = new NavigationPage(new MainPage());
+            //}
+
             MainPage = new AppShell();
         }
 
@@ -42,7 +56,10 @@ namespace HeadsOrTails
                 {
                     ID = (int)Application.Current.Resources["ID"],
                     PlayerName = (string)Application.Current.Resources["PlayerName"],
+                    PlayerNumber = (string)Application.Current.Resources["PlayerNumber"],
+                    UniqueID = (string)Application.Current.Resources["UniqueID"],
                     PlayingHeads = (int)Application.Current.Resources["PlayingHeads"],
+                    SelectedSides = (int)Application.Current.Resources["SelectedSides"],
                     HeadsCount = (int)Current.Resources["HeadsCount"],
                     TailsCount = (int)Application.Current.Resources["TailsCount"],
                     MaxPossibleWinnings = (int)Application.Current.Resources["MaxPossibleWinnings"],
@@ -52,6 +69,13 @@ namespace HeadsOrTails
 
                 dbHelper.UpdateItem(currentGameState);
             }
+        }
+        private bool CheckRegistrationStatus()
+        {
+            // Implement logic to check if the user has already registered
+            // You can check a flag in the application's settings or a local database
+            // Return true if registered, false otherwise
+            return false; // Placeholder logic, replace with actual implementation
         }
     }
 }

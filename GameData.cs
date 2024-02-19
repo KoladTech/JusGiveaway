@@ -15,6 +15,15 @@ namespace HeadsOrTails
         public string PlayerName { get; set; }
 
         [NotNull]
+        public string PlayerNumber { get; set; }
+
+        [NotNull]
+        public string UniqueID { get; set; }
+
+        [NotNull]
+        public int SelectedSides { get; set; }
+
+        [NotNull]
         public int PlayingHeads { get; set; }
 
         [NotNull]
@@ -41,6 +50,9 @@ namespace HeadsOrTails
             // Initialize properties to zero
             ID = 0;
             PlayerName = "";
+            PlayerNumber = "";
+            UniqueID = "";
+            SelectedSides = 0;
             PlayingHeads = 0;
             HeadsCount = 0;
             TailsCount = 0;
