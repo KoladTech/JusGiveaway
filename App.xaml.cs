@@ -5,15 +5,22 @@ namespace HeadsOrTails
     public partial class App : Application
     {
         public static SQLiteConnection? Database { get; set; }
+        SQLiteDBHelper dbHelper;
 
         public App()
         {
             InitializeComponent();
+            dbHelper = new();
 
             //// Check if the user has already registered
             //bool isRegistered = CheckRegistrationStatus();
 
-            //if (!isRegistered)
+            //Preferences.Remove("UserRegistered");
+            //Preferences.Remove("UserSignedIn");
+            //Preferences.Remove("CodeExecuted");
+
+
+            //if (!Preferences.ContainsKey("UserSignedIn"))
             //{
             //    // If not registered, navigate to the registration page
             //    MainPage = new NavigationPage(new RegistrationPage());
@@ -24,7 +31,24 @@ namespace HeadsOrTails
             //    MainPage = new NavigationPage(new MainPage());
             //}
 
-            MainPage = new AppShell();
+            //MainPage = new AppShell();
+        }
+
+        protected override Window CreateWindow(IActivationState activationState)
+        {
+            // Set the initial page to RegistrationPage
+            if (!Preferences.ContainsKey("UserRegistered"))
+            {
+                return new Window(new NavigationPage(new RegistrationPage()));
+            }
+
+            // Set the next page to SignInPage
+            if (!Preferences.ContainsKey("UserSignedIn"))
+            {
+                return new Window(new NavigationPage(new SignInPage()));
+            }
+
+            return new Window(new NavigationPage(new MainPage()));
         }
 
         protected override void OnStart()
@@ -45,27 +69,14 @@ namespace HeadsOrTails
 
         private void SaveProgressToDatabase()
         {
-            // Perform database operations to save progress
-            // For example, you can use your SQLiteDBHelper class to save data
-            SQLiteDBHelper dbHelper = new();
             // Perform your save operations here using dbHelper
             // Store data in Application Properties
             if (Application.Current != null)
             {
-                GameData currentGameState = new()
-                {
-                    ID = (int)Application.Current.Resources["ID"],
-                    PlayerName = (string)Application.Current.Resources["PlayerName"],
-                    PlayerNumber = (string)Application.Current.Resources["PlayerNumber"],
-                    UniqueID = (string)Application.Current.Resources["UniqueID"],
-                    PlayingHeads = (int)Application.Current.Resources["PlayingHeads"],
-                    SelectedSides = (int)Application.Current.Resources["SelectedSides"],
-                    HeadsCount = (int)Current.Resources["HeadsCount"],
-                    TailsCount = (int)Application.Current.Resources["TailsCount"],
-                    MaxPossibleWinnings = (int)Application.Current.Resources["MaxPossibleWinnings"],
-                    CurrentWinnings = (int)Application.Current.Resources["CurrentWinnings"],
-                    TotalResetsUsed = (int)Application.Current.Resources["TotalResetsUsed"]
-                };
+                GameData currentGameState = dbHelper.GetRowWithMaxId();
+                currentGameState.HeadsCount = (int)Current.Resources["HeadsCount"];
+                currentGameState.TailsCount = (int)Current.Resources["TailsCount"];
+                currentGameState.CurrentWinnings = (int)Current.Resources["CurrentWinnings"];
 
                 dbHelper.UpdateItem(currentGameState);
             }

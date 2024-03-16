@@ -4,67 +4,68 @@ using Color = Microsoft.Maui.Graphics.Color;
 using System.Reflection;
 using System.ComponentModel;
 using System.Diagnostics;
+using Firebase.Database;
 
 
 namespace HeadsOrTails
 {
     public partial class MainPage : ContentPage
     {
-        private string playerName = string.Empty;
-        private string playerPhoneNumber = string.Empty;
-        private string uniqueID = string.Empty;
-        private bool showTextBoxes = true;
+        private string uID = string.Empty;
         private int headsCount = 0;
         private int tailsCount = 0;
-        private int totalFlips = 0; // Total number of coin flips
-        // Define a boolean variable to hold the player's choice
+        private int totalFlips = 0;
         private bool hasSelectedSides = false;
-        private bool isHeadsChosen = true; // Default choice is heads
+        private bool isHeadsChosen = true;
         private int score = 0;
-        private int scoreAdjuster = 1;
+        private int scoreAdjuster = 1; //helps with calculation of score
         private int currentWinnings = 0;
-        // Define the maxPossibleWinnings variable with an initial value of 20000
-        private int maxPossibleWinnings = 20000;
-
-        // Define the maximum number of resets allowed
-        private const int MaxResets = 20;
+        private int maxPossibleWinnings = 0;
+        private double totalGiveawayFunds = 0;
+        private int totalResetsAllowed = 0;
         private const string coinFrontImage = "kobo_front.png";
         private const string coinBackImage = "kobo_back.png";
 
         // Define a counter to keep track of the number of resets
         private int resetCounter = 0;
         private int gameSessionId = 0;
-        SQLiteDBHelper dbHelper = new();
-
-
+        private readonly SQLiteDBHelper dbHelper;
+        private readonly UserData userData;
+        private GameData activeGame;
+        FirebaseClient firebaseClient = FirebaseClientHelper.Instance.GetFirebaseClient();
 
         public MainPage()
         {
             InitializeComponent();
+
+            dbHelper = new();
+            userData = dbHelper.GetUserData()[0];
+            activeGame = dbHelper.GetRowWithMaxId();
+
             //MySQLHelper.ConnectAndQuery();
 
-            // Check if the code has been run before
-            if (!Preferences.ContainsKey("CodeExecuted"))
-            {
-                // Code to run only once goes here
-                //TODO Only do this when app first runs
-                var assembly = IntrospectionExtensions.GetTypeInfo(typeof(App)).Assembly;
-                using (Stream stream = assembly.GetManifestResourceStream("HeadsOrTails.HeadsorTailsGameData.db3"))
-                {
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        stream.CopyTo(memoryStream);
+            //// Check if the code has been run before
+            //if (!Preferences.ContainsKey("CodeExecuted"))
+            //{
+            //    // Code to run only once goes here
+            //    //TODO Only do this when app first runs
+            //    var assembly = IntrospectionExtensions.GetTypeInfo(typeof(App)).Assembly;
+            //    using (Stream stream = assembly.GetManifestResourceStream("HeadsOrTails.HeadsorTailsGameData.db3"))
+            //    {
+            //        using (MemoryStream memoryStream = new MemoryStream())
+            //        {
+            //            stream.CopyTo(memoryStream);
 
-                        File.WriteAllBytes(SQLiteDBHelper.DbPath, memoryStream.ToArray());
-                    }
-                }
-                // Set a flag indicating that the code has been executed
-                Preferences.Set("CodeExecuted", true);
-            }
+            //            File.WriteAllBytes(SQLiteDBHelper.DbPath, memoryStream.ToArray());
+            //        }
+            //    }
+            //    // Set a flag indicating that the code has been executed
+            //    Preferences.Set("CodeExecuted", true);
+            //}
 
             gameSessionId = dbHelper.GetMaxId();
 
-            List<GameData> items = dbHelper.GetItems();
+            List<GameData> items = dbHelper.GetGameData();
             foreach (GameData item in items)
             {
                 //Console.WriteLine($"ID: {item.Id}, Name: {item.Name}, Price: {item.Price}");
@@ -74,43 +75,31 @@ namespace HeadsOrTails
             GameData lastGame = new GameData();
             lastGame = dbHelper.GetRowWithMaxId();
             
-
-            if (lastGame == null)
+            if (lastGame != null && lastGame.SelectedSides == 1)
             {
-                dbHelper.InsertItem(new GameData());
-            }
-            else if (lastGame != null && lastGame.SelectedSides == 1)
-            {
-                playerName = lastGame.PlayerName;
-                playerPhoneNumber = lastGame.PlayerNumber;
-                uniqueID = lastGame.UniqueID;
-                hasSelectedSides = lastGame.SelectedSides == 1 ? true : false;
-                isHeadsChosen = lastGame.PlayingHeads == 1 ? true : false;
+                uID = lastGame.UID;
+                hasSelectedSides = lastGame.SelectedSides == 1;
+                isHeadsChosen = lastGame.PlayingHeads == 1;
                 headsCount = lastGame.HeadsCount;
                 tailsCount = lastGame.TailsCount;
                 totalFlips = headsCount + tailsCount;
                 maxPossibleWinnings = lastGame.MaxPossibleWinnings;
                 currentWinnings = lastGame.CurrentWinnings;
                 resetCounter = lastGame.TotalResetsUsed;
-                
+
                 // Set UI with DB values
                 UpdateCounts();
-                //PotentialWinningLabel.Text = $"Potential Winnings: N{currentWinnings}";
-                //TotalPossibleWinningsLabel.Text = $"Maximum win : N{1000 * (MaxResets - resetCounter)}";
 
                 //since we already have a game saved, setup the game from where we left off
-                startGameUISetup(playerName, (isHeadsChosen ? "Heads" : "Tails"), maxPossibleWinnings, currentWinnings);
+                startGameUISetup(userData.Name, (isHeadsChosen ? "Heads" : "Tails"), maxPossibleWinnings, currentWinnings);
+
+                SaveDataToProperties();
             }
             else if (lastGame != null)
             {
                 hasSelectedSides = false;
-                playerName = lastGame.PlayerName;
-                playerPhoneNumber = lastGame.PlayerNumber;
-                maxPossibleWinnings = lastGame.MaxPossibleWinnings;
-                resetCounter = lastGame.TotalResetsUsed;
-                showTextBoxes = playerName == "" ? true : false;
-                NameEntryFrame.IsVisible = showTextBoxes;
-                PhoneNumberEntryFrame.IsVisible = showTextBoxes;
+                maxPossibleWinnings = activeGame.MaxPossibleWinnings;
+                resetCounter = activeGame.TotalResetsUsed;
             }
 
             //TODO
@@ -124,23 +113,29 @@ namespace HeadsOrTails
             //    await UserChoiceImage.RotateXTo(180, 100, Easing.SinInOut); // Rotate the coin around the X-axis by 180 degrees in 200 milliseconds
             //    CoinImage.RotationX = 0; // Reset rotation to 0
             //}
+            UpdateTotalGiveawayFundsLabelTimer();
+        }
 
+        public async Task<double> GetRemainingGiveawayFundsAsync()
+        {
+            var giveaway = await firebaseClient.Child("GiveAways/A").OnceSingleAsync<Dictionary<string, string>>();
+            totalResetsAllowed = int.Parse(giveaway["TotalResetsAllowed"]);
+            return double.Parse(giveaway["TotalGiveAwayFunds"]);
         }
         private void SaveDataToProperties()
         {
             // Store data in Application Properties
             if (Application.Current != null)
             {
-                Application.Current.Resources["ID"] = gameSessionId;
-                Application.Current.Resources["PlayerName"] = playerName;
-                Application.Current.Resources["PlayerNumber"] = playerPhoneNumber;
-                Application.Current.Resources["UniqueID"] = uniqueID;
+                Application.Current.Resources["ID"] = activeGame.ID;
+                Application.Current.Resources["PlayerName"] = userData.Name;
+                Application.Current.Resources["UniqueID"] = userData.UID;
                 Application.Current.Resources["PlayingHeads"] = isHeadsChosen ? 1 : 0;
                 Application.Current.Resources["SelectedSides"] = hasSelectedSides ? 1 : 0;
                 Application.Current.Resources["HeadsCount"] = headsCount;
                 Application.Current.Resources["TailsCount"] = tailsCount;
-                Application.Current.Resources["MaxPossibleWinnings"] = maxPossibleWinnings;
-                Application.Current.Resources["CurrentWinnings"] = currentWinnings;
+                Application.Current.Resources["MaxPossibleWinnings"] = activeGame.MaxPossibleWinnings;
+                Application.Current.Resources["CurrentWinnings"] = activeGame.CurrentWinnings;
                 Application.Current.Resources["TotalResetsUsed"] = resetCounter;
             }
         }
@@ -151,7 +146,7 @@ namespace HeadsOrTails
             await CoinBackImage.ScaleTo(0.8, 100);
             await CoinFrontImage.ScaleTo(1, 100);
             scoreAdjuster = 1;
-            SelectionButtonFrame.IsVisible = true;
+            SelectionButton.IsEnabled = true;
         }
 
         private async void OnChooseTailsTapped(object sender, EventArgs e)
@@ -160,43 +155,43 @@ namespace HeadsOrTails
             await CoinFrontImage.ScaleTo(0.8, 100);
             await CoinBackImage.ScaleTo(1, 100);
             scoreAdjuster = -1;
-            SelectionButtonFrame.IsVisible = true;
+            SelectionButton.IsEnabled = true;
         }
 
 
         private async void OnLockInSelectionClicked(object sender, EventArgs e)
         {
-            await SelectionButtonFrame.ScaleTo(1.3, 100);
-            await SelectionButtonFrame.ScaleTo(1, 100);
+            await CommonFunctions.AnimateButton((Button)sender);
 
             string choice = isHeadsChosen ? "Heads" : "Tails";
             // Prompt the user to confirm their selection
-            var customAlertPage = new CustomAlertPage($"Confirm?", $"Username - {playerName}\nLast Digits of # - {playerPhoneNumber}\nPlaying : {choice}");
+            var customAlertPage = new CustomAlertPage($"Confirm Selection?", $"{userData.Name} : {choice}");
             await Navigation.PushModalAsync(customAlertPage);
             bool isConfirmed = await customAlertPage.WaitForUserResponseAsync();
-            //bool isConfirmed = await DisplayAlert($"Confirm UserName and Choice : {choice}?", $"Are you sure you want to lock in {playerName} as your Username and {choice} as your choice?", "Yes", "No");
 
             if (isConfirmed)
             {
-                uniqueID = EncryptionHelper.Encrypt(playerPhoneNumber);
+                //uID = EncryptionHelper.Encrypt(playerPhoneNumber);
 
                 hasSelectedSides = true;
-                startGameUISetup(playerName, choice, maxPossibleWinnings, 0);
+                startGameUISetup(userData.Name, choice, maxPossibleWinnings, 0);
 
                 SaveDataToProperties();
                 GameData gameData = new()
                 {
-                    PlayerName = playerName,
-                    PlayerNumber = playerPhoneNumber,
-                    UniqueID = uniqueID,
-                    ID = dbHelper.GetMaxId(),
+                    UID = userData.UID,
+                    ID = activeGame.ID,
                     SelectedSides = 1,
                     PlayingHeads = isHeadsChosen ? 1 : 0,
                     MaxPossibleWinnings = maxPossibleWinnings,
                     TotalResetsUsed = resetCounter,
                     //store more stuff here...
                 };
-                dbHelper.UpdateItem(gameData);
+                activeGame.SelectedSides = 1;
+                activeGame.PlayingHeads = isHeadsChosen ? 1 : 0;
+                dbHelper.UpdateItem(activeGame);
+                totalGiveawayFunds = await GetRemainingGiveawayFundsAsync();
+                TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds.ToString("NO")}";
             }
         }
 
@@ -212,7 +207,7 @@ namespace HeadsOrTails
             for (int i = 0; i < 15; i++)
             {
                 // Alternate between front and back images during rotation
-                CoinImage.Source = i % 2 == 0 ? "kobo_front.png" : "kobo_back.png";
+                CoinImage.Source = i % 2 == 0 ? coinFrontImage : coinBackImage;
 
                 // Rotate the coin around the X-axis
                 await CoinImage.RotateXTo(180, 100, Easing.SinInOut); // Rotate the coin around the X-axis by 180 degrees in 200 milliseconds
@@ -246,37 +241,9 @@ namespace HeadsOrTails
             SaveDataToProperties();
         }
 
-        private void OnUserNameTextChanged(object sender, TextChangedEventArgs e)
-        {
-            // Get the Entry control
-            Entry entry = (Entry)sender;
-
-            // Remove any spaces from the entered text
-            entry.Text = entry.Text.Replace(" ", string.Empty);
-            playerName = entry.Text;
-        }
-
-        private void OnPhoneNumberTextChanged(object sender, TextChangedEventArgs e)
-        {
-            // Get the Entry control
-            Entry entry = (Entry)sender;
-
-            // Get the current text from the Entry
-            string text = entry.Text;
-
-            // Remove any non-numeric characters from the text
-            string newText = string.Concat(text.Where(char.IsDigit));
-
-            // If the new text is different from the current text,
-            // update the Entry's text to the new filtered text
-            if (newText != text)
-            {
-                entry.Text = newText;
-            }
-            playerPhoneNumber = entry.Text;
-        }
         private void UpdateCounts()
         {
+            scoreAdjuster = isHeadsChosen ?1 : -1;
             score = (headsCount - tailsCount) * scoreAdjuster;
             ScoreLabel.Text = $"Score: {score}";
             ScoreLabel.TextColor = (score >= 10) ? Color.FromRgb(0, 255, 0) : Color.FromRgb(255, 0, 0);
@@ -303,7 +270,7 @@ namespace HeadsOrTails
         private async void CheckForWin()
         {
             bool playerWon = false;
-            bool canCashOut = currentWinnings >= 2000;
+            bool canCashOut = currentWinnings >= activeGame.MinCashOut;
             string roundCompleteMsg = $"Round {(totalFlips / 100)} complete!!!";
             string cashOutMsg = string.Empty;
             string winMsg = string.Empty;
@@ -334,7 +301,7 @@ namespace HeadsOrTails
                     }
                 }
 
-                canCashOut = currentWinnings >= 1000;
+                canCashOut = currentWinnings >= activeGame.MinCashOut;
                 cashOutMsg = canCashOut ? "\nYou can cashout or Play for more" : "";
                 winMsg = $"You win N1000! {cashOutMsg}";
                 CashOutButtonFrame.IsVisible = canCashOut;
@@ -360,7 +327,6 @@ namespace HeadsOrTails
                 await customAlertPage.WaitForUserResponseAsync();
 
                 //save progress to db
-                SQLiteDBHelper dbHelper = new();
                 GameData currentGameState = dbHelper.GetRowWithMaxId();
 
                 //currentGameState.ID = gameSessionId;
@@ -379,21 +345,19 @@ namespace HeadsOrTails
         // Event handler for the reset button
         private async void OnResetClicked(object sender, EventArgs e)
         {
-            //bool reset = false;
-
             await ResetButtonFrame.ScaleTo(1.3, 100);
             await ResetButtonFrame.ScaleTo(1, 100);
             //ResetButtonFrame.BackgroundColor = Color.FromRgb(169, 169, 169);
             //ResetButton.IsEnabled = false;
 
-            var customAlertPage = new CustomAlertPage("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (MaxResets - resetCounter - 1)}!");
+            var customAlertPage = new CustomAlertPage("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (totalResetsAllowed - resetCounter - 1)}!");
             await Navigation.PushModalAsync(customAlertPage);
             bool reset = await customAlertPage.WaitForUserResponseAsync();
 
             //bool reset = await DisplayAlert("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (MaxResets-resetCounter-1)}!", "Yes", "No");
             if (reset)
             {
-                if (resetCounter < MaxResets)
+                if (resetCounter < totalResetsAllowed)
                 {
                     // Reduce totalPossibleWinnings by 1000
                     maxPossibleWinnings -= 1000;
@@ -407,7 +371,7 @@ namespace HeadsOrTails
                     SaveDataToProperties();
                 }
             }
-            if (resetCounter == MaxResets - 1)
+            if (resetCounter == totalResetsAllowed - 1)
             {
                 ResetButton.IsEnabled = false;
             }
@@ -430,15 +394,15 @@ namespace HeadsOrTails
             //TODO : new entry in db, maybe do it here then update in lock in
             GameData newGameState = new()
             {
-                PlayerName = playerName,
-                PlayerNumber = playerPhoneNumber,
-                UniqueID = uniqueID,
-                SelectedSides = hasSelectedSides ? 0 : 1,
+                UID = activeGame.UID,
+                SelectedSides = 0,
                 MaxPossibleWinnings = maxPossibleWinnings,
-                TotalResetsUsed = resetCounter
+                TotalResetsUsed = resetCounter,
+                MinCashOut = activeGame.MinCashOut
             };
             dbHelper.InsertItem(newGameState);
             gameSessionId = dbHelper.GetMaxId();
+            activeGame = dbHelper.GetRowWithMaxId();
 
             ResetUI();
         }
@@ -460,9 +424,9 @@ namespace HeadsOrTails
 
 
             PotentialWinningLabel.Text = "Potential Winnings: N0";
-            TotalPossibleWinningsLabel.Text = $"Maximum win : N{1000 * (MaxResets - resetCounter)}";
+            TotalPossibleWinningsLabel.Text = $"Maximum win : N{1000 * (totalResetsAllowed - resetCounter)}";
 
-            SelectionButtonFrame.IsVisible = true;
+            SelectionButton.IsVisible = true;
             UserChoiceLabel.Text = "Heads or Tails";
             CoinFlipLayout.IsVisible = false;
             CoinFrontImage.IsVisible = true;
@@ -470,6 +434,7 @@ namespace HeadsOrTails
             ResetButton.IsVisible = false;
             InformationLayout.IsVisible = false;
             SideSelectionLayout.IsVisible = true;
+            CashOutButtonFrame.IsVisible = false;
 
         }
 
@@ -478,15 +443,14 @@ namespace HeadsOrTails
             UserChoiceLabel.Text = $"{username} : {choice}";
             TotalPossibleWinningsLabel.Text = $"Maximum Win: N{maxPossibleWinning}";
             PotentialWinningLabel.Text = $"Potential Winnings: N{potentialWinning}";
-            NameEntryFrame.IsVisible = false;
-            PhoneNumberEntryFrame.IsVisible = false;
-            SelectionButtonFrame.IsVisible = false;
+            SelectionButton.IsVisible = false;
             SideSelectionLayout.IsVisible = false;
             CoinFlipLayout.IsVisible = true;
             ResetButton.IsVisible = true;
             InformationLayout.IsVisible = true;
             Titlelayout.Orientation = StackOrientation.Horizontal;
             UserChoiceImage.IsVisible = false;
+            TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds}";
         }
 
         private bool isMaxWinAchieved()
@@ -502,38 +466,35 @@ namespace HeadsOrTails
             return false;
         }
 
+        private async void UpdateTotalGiveawayFundsLabelTimer()
+        {
+            //if update has not happened in about 15 minutes, ask for player to connect to data to avoid 
+            //playing for no reason
+
+            // Set up a timer to read the value from the Firebase Realtime Database every x seconds
+            TimeSpan interval = TimeSpan.FromSeconds(5);
+            while (true)
+            {
+                // Read the value from the Firebase Realtime Database
+                totalGiveawayFunds = await GetRemainingGiveawayFundsAsync();
+                TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds.ToString("N0")}";
+
+                // Update the label with the retrieved value
+                //MainThread.BeginInvokeOnMainThread(() =>
+                //{
+                //    mulla.Text = $"N{value}";
+                //});
+
+                // Wait for the specified interval before reading again
+                await Task.Delay(interval);
+            }
+        }
+
         private async void OnCashOutClicked(object sender, EventArgs e)
         {
             await CashOutButtonFrame.ScaleTo(1.3, 100);
             await CashOutButtonFrame.ScaleTo(1, 100);
             await DisplayAlert("Thank you for playing!", $"Are you sure you want to cashout your winnings of {currentWinnings}?", "Yes", "No");
-
-            //SendEmail("recipient@example.com", "Cashout Request", "Please process my cashout request.");
-
         }
-
-        //private async void SendEmail(string recipient, string subject, string body)
-        //{
-        //    try
-        //    {
-        //        var message = new EmailMessage
-        //        {
-        //            To = new List<string> { recipient },
-        //            Subject = subject,
-        //            Body = body
-        //        };
-        //        await Email.ComposeAsync(message);
-        //    }
-        //    catch (FeatureNotSupportedException)
-        //    {
-        //        // Email is not supported on this device
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Other error occurred
-        //    }
-        //}
-
-
     }
 }

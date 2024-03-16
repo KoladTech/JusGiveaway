@@ -21,16 +21,27 @@ namespace HeadsOrTails
 
 
             dbConnection.CreateTable<GameData>(); // Create the 'GameData' table if it doesn't exist
+            dbConnection.CreateTable<UserData>(); // Create the 'UserData' table if it doesn't exist
             var t = dbConnection.DatabasePath;
 
             bool dbExists = File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "HeadsorTailsGameData.db3"));
             //bool dbExists2 = File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "HeadsorTailsGameData.db3"));
 
-
-            t = t;
         }
 
-        public List<GameData> GetItems()
+        #region UserData db functions
+        public int UserDataInsertItem(UserData data)
+        {
+            return dbConnection.Insert(data);
+        }
+        public List<UserData> GetUserData()
+        {
+            return dbConnection.Table<UserData>().ToList();
+        }
+        #endregion
+
+        #region GameData db functions
+        public List<GameData> GetGameData()
         {
             return dbConnection.Table<GameData>().ToList();
         }
@@ -40,7 +51,7 @@ namespace HeadsOrTails
             return dbConnection.Table<GameData>().FirstOrDefault();
         }
 
-        public int InsertItem(GameData item)
+        public int InsertItem(object item)
         {
             return dbConnection.Insert(item);
         }
@@ -108,5 +119,6 @@ namespace HeadsOrTails
                 return false;
             }
         }
+        #endregion
     }
 }

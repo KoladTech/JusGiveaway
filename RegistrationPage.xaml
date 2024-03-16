@@ -2,11 +2,39 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="HeadsOrTails.RegistrationPage"
-             Title="RegistrationPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+             Title="RegistrationPage"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.BackgroundImageSource>
+        <FileImageSource File="mint_green_bckg.jpg" />
+    </ContentPage.BackgroundImageSource>
+    <VerticalStackLayout VerticalOptions="CenterAndExpand" Padding="20">
+        <Label Text="Register account" FontSize="26" FontAttributes="Bold" HorizontalOptions="Center" TextColor="#008000" Padding="10" />
+
+        <Frame x:Name="NameEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+            <Entry Style="{StaticResource EntryStyle}" x:Name="NameEntry" Placeholder="Enter your username" MaxLength="10" TextChanged="OnUserNameTextChanged"/>
+        </Frame>
+        <Frame x:Name="EmailEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+            <Entry Style="{StaticResource EntryStyle}" x:Name="EmailEntry" Placeholder="Enter email" Keyboard="Email" TextChanged="OnEmailTextChanged"/>
+        </Frame>
+        <Frame x:Name="PwdEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+            <Entry Style="{StaticResource EntryStyle}" x:Name="PwdEntry" Placeholder="Enter password" MaxLength="12" IsPassword="True" TextChanged="OnPasswordTextChanged"/>
+        </Frame>
+        <Frame x:Name="PwdConfirmEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+            <Entry Style="{StaticResource EntryStyle}" x:Name="PwdConfirmEntry" Placeholder="Confirm password" MaxLength="12"  IsPassword="True" TextChanged="OnConfirmPwdTextChanged"/>
+        </Frame>
+
+        <Button x:Name="RegisterButton"
+            Text="Register"
+            TextColor="Black"
+            FontSize="16"
+            BackgroundColor="#468fa2"
+            CornerRadius="20"
+            BorderColor="#fffff0"
+            BorderWidth="3"
+            Clicked="OnRegisterClicked"
+            IsEnabled="False"
+            Padding="20"
+            Margin="20">
+        </Button>
     </VerticalStackLayout>
 </ContentPage>

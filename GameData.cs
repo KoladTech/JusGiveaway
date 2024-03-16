@@ -9,22 +9,33 @@ namespace HeadsOrTails
 {
     class GameData
     {
+        // Default constructor
+        public GameData()
+        {
+            // Initialize properties to zero
+            ID = 0;
+            UID = "";
+            SelectedSides = 0;
+            PlayingHeads = 0;
+            HeadsCount = 0;
+            TailsCount = 0;
+            MaxPossibleWinnings = 0;
+            CurrentWinnings = 0;
+            MinCashOut = 0;
+            TotalResetsUsed = 0;
+        }
+
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 
-        public string PlayerName { get; set; }
-
         [NotNull]
-        public string PlayerNumber { get; set; }
-
-        [NotNull]
-        public string UniqueID { get; set; }
-
-        [NotNull]
-        public int SelectedSides { get; set; }
+        public string UID { get; set; }
 
         [NotNull]
         public int PlayingHeads { get; set; }
+
+        [NotNull]
+        public int SelectedSides { get; set; }
 
         [NotNull]
         public int HeadsCount { get; set; }
@@ -39,32 +50,17 @@ namespace HeadsOrTails
         public int CurrentWinnings { get; set; }
 
         [NotNull]
+        public int MinCashOut { get; set; }
+
+        [NotNull]
         public int TotalResetsUsed { get; set; }
 
         // Add other properties as needed
         //users device name, location to try to ensure its 1 person per win
-
-        // Default constructor
-        public GameData()
-        {
-            // Initialize properties to zero
-            ID = 0;
-            PlayerName = "";
-            PlayerNumber = "";
-            UniqueID = "";
-            SelectedSides = 0;
-            PlayingHeads = 0;
-            HeadsCount = 0;
-            TailsCount = 0;
-            MaxPossibleWinnings = 0;
-            CurrentWinnings = 0;
-            TotalResetsUsed = 0;
-        }
     }
 
     //public GameData(
     //        int id = 0,
-    //        string playerName = "",
     //        int playingHeads = 0,
     //        int headsCount = 0,
     //        int tailsCount = 0,
@@ -74,7 +70,6 @@ namespace HeadsOrTails
     //{
     //    // Initialize properties to zero
     //    ID = id;
-    //    PlayerName = playerName;
     //    PlayingHeads = playingHeads;
     //    HeadsCount = headsCount;
     //    TailsCount = tailsCount;

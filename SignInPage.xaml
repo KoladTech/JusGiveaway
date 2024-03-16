@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HeadsOrTails.SignInPage"
+             Title="SignInPage"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.BackgroundImageSource>
+        <FileImageSource File="mint_green_bckg.jpg" />
+    </ContentPage.BackgroundImageSource>
+    <VerticalStackLayout VerticalOptions="CenterAndExpand" Padding="20">
+        <Label Text="Sign In" FontSize="26" FontAttributes="Bold" HorizontalOptions="Center" TextColor="#008000" Padding="10" />
+
+        <Frame x:Name="SignInEmailEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+            <Entry Style="{StaticResource EntryStyle}" x:Name="SignInEmailEntry" Placeholder="Enter email" Keyboard="Email" TextChanged="OnSignInEmailTextChanged" IsEnabled="False"/>
+        </Frame>
+        <Frame x:Name="SignInPwdEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+            <Entry Style="{StaticResource EntryStyle}" x:Name="SignInPwdEntry" Placeholder="Enter password" IsPassword="True" TextChanged="OnSignInPasswordTextChanged"/>
+        </Frame>
+
+
+        <Button x:Name="SignInButton"
+            Text="Sign In"
+            TextColor="White"
+            FontSize="20"
+            BackgroundColor="#468fa2"
+            CornerRadius="20"
+            BorderColor="#fffff0"
+            BorderWidth="2"
+            Clicked="OnSignInClicked"
+            IsEnabled="False"
+            Padding="20"
+            Margin="50">
+        </Button>
+    </VerticalStackLayout>
+</ContentPage>
