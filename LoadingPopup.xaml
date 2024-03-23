@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HeadsOrTails.LoadingPopup"
+             BackgroundColor="#80000000" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+        <ActivityIndicator IsRunning="True" Color="White" />
+        <!-- You can add additional content here, such as a label -->
+    </StackLayout>
+</ContentView>
+<!-- LoadingPopup.xaml -->
+<!--<Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:local="clr-namespace:YourNamespace"
+       x:Class="YourNamespace.LoadingPopup">
+    <ContentView BackgroundColor="#80000000" Padding="20" VerticalOptions="Center" HorizontalOptions="Center">
+        <ActivityIndicator IsRunning="True" Color="White" />
+    </ContentView>
+</Popup>-->
+
