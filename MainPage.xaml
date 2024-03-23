@@ -169,37 +169,24 @@
                             FontSize="16" HorizontalOptions="Center" IsEnabled="false" 
                             CornerRadius="20" BackgroundColor="Green" BorderWidth="2" Padding="20"/>-->
 
-                        <Frame  x:Name="CashOutButtonFrame"
-                           BackgroundColor="Green"
-                           CornerRadius="20"
-                           Padding="10"
-                           Margin="20"
-                           IsVisible ="False">
-                            <Button Text="Cash Out"
-                                TextColor="Black"
-                                FontSize="16"
-                                BackgroundColor="Transparent"
-                                CornerRadius="20"
-                                BorderColor="Green"
-                                BorderWidth="2"
-                                Clicked="OnCashOutClicked"/>
-                        </Frame>
+                        <Button x:Name="CashOutButton"
+                            Text="Cash Out"
+                            TextColor="White"
+                            BackgroundColor="Green"
+                            Clicked="OnCashOutClicked"
+                            IsVisible="true"
+                            Style="{StaticResource CustomButtonStyle}">
+                        </Button>
 
-                        <Frame   x:Name="ResetButtonFrame"
-                           BackgroundColor="#468fa2"
-                           CornerRadius="20"
-                           Padding="10"
-                           Margin="20">
-                            <Button  x:Name="ResetButton"
-                                Text="Reset Game"
-                                TextColor="Black"
-                                FontSize="16"
-                                BackgroundColor="Transparent"
-                                CornerRadius="20"
-                                BorderColor="#468fa2"
-                                BorderWidth="2"
-                                Clicked="OnResetClicked"/>
-                        </Frame>
+                        <Button x:Name="ResetButton"
+                            Text="Reset Game"
+                            TextColor="White"
+                            BackgroundColor="#468fa2"
+                            BorderWidth="1"
+                            Clicked="OnResetClicked"
+                            IsVisible="False"
+                            Style="{StaticResource CustomButtonStyle}">
+                        </Button>
 
                         <!--<Button x:Name="ResetButton" Text="Reset Game" Clicked="OnResetClicked" 
                             FontSize="16" HorizontalOptions="Center" IsVisible="false"

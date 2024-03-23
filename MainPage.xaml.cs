@@ -1,10 +1,6 @@
-﻿using SQLite;
-using System.Text;
-using Color = Microsoft.Maui.Graphics.Color;
-using System.Reflection;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using Color = Microsoft.Maui.Graphics.Color;
 using Firebase.Database;
+using Firebase.Database.Query;
 
 
 namespace HeadsOrTails
@@ -119,8 +115,8 @@ namespace HeadsOrTails
         public async Task<double> GetRemainingGiveawayFundsAsync()
         {
             var giveaway = await firebaseClient.Child("GiveAways/A").OnceSingleAsync<Dictionary<string, string>>();
-            totalResetsAllowed = int.Parse(giveaway["TotalResetsAllowed"]);
-            return double.Parse(giveaway["TotalGiveAwayFunds"]);
+            //totalResetsAllowed = int.Parse(giveaway["TotalResetsAllowed"]);
+            return double.Parse(giveaway["LeftoverGiveawayFunds"]);
         }
         private void SaveDataToProperties()
         {
@@ -197,9 +193,9 @@ namespace HeadsOrTails
 
         private async void OnCoinTapped(object sender, EventArgs e)
         {
-            CashOutButtonFrame.IsVisible = false;
-            //CoinImage.IsEnabled = false;
-            totalFlips += 1;
+            CashOutButton.IsVisible = false;
+            CoinImage.IsEnabled = false;
+            totalFlips += 50;
 
             Random random = new Random();
 
@@ -220,21 +216,21 @@ namespace HeadsOrTails
             // Update heads or tails count based on the random result
             if (result == 0)
             {
-                headsCount++;
-                //headsCount += 10;
+                //headsCount++;
+                headsCount += 50;
                 CoinImage.Source = coinFrontImage;
             }
             else
             {
-                tailsCount++;
-                //tailsCount += 10;
+                //tailsCount++;
+                tailsCount += 50;
                 CoinImage.Source = coinBackImage;
             }
             //score = (headsCount - tailsCount) * scoreAdjuster;
 
             // Update UI
             UpdateCounts();
-            //CoinImage.IsEnabled = true;
+            CoinImage.IsEnabled = true;
 
             CheckForWin();
 
@@ -304,7 +300,7 @@ namespace HeadsOrTails
                 canCashOut = currentWinnings >= activeGame.MinCashOut;
                 cashOutMsg = canCashOut ? "\nYou can cashout or Play for more" : "";
                 winMsg = $"You win N1000! {cashOutMsg}";
-                CashOutButtonFrame.IsVisible = canCashOut;
+                CashOutButton.IsVisible = canCashOut;
 
                 PotentialWinningLabel.Text = $"Current Winnings: N{currentWinnings}";
 
@@ -345,39 +341,50 @@ namespace HeadsOrTails
         // Event handler for the reset button
         private async void OnResetClicked(object sender, EventArgs e)
         {
-            await ResetButtonFrame.ScaleTo(1.3, 100);
-            await ResetButtonFrame.ScaleTo(1, 100);
-            //ResetButtonFrame.BackgroundColor = Color.FromRgb(169, 169, 169);
-            //ResetButton.IsEnabled = false;
+            // Disable the button
+            Button button = (Button)sender;
+            button.IsEnabled = false;
 
-            var customAlertPage = new CustomAlertPage("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (totalResetsAllowed - resetCounter - 1)}!");
-            await Navigation.PushModalAsync(customAlertPage);
-            bool reset = await customAlertPage.WaitForUserResponseAsync();
-
-            //bool reset = await DisplayAlert("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (MaxResets-resetCounter-1)}!", "Yes", "No");
-            if (reset)
+            try
             {
-                if (resetCounter < totalResetsAllowed)
+                await CommonFunctions.AnimateButton((Button)sender);
+
+                //ResetButtonFrame.BackgroundColor = Color.FromRgb(169, 169, 169);
+                //ResetButton.IsEnabled = false;
+
+                var customAlertPage = new CustomAlertPage("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (totalResetsAllowed - resetCounter - 1)}!");
+                await Navigation.PushModalAsync(customAlertPage);
+                bool reset = await customAlertPage.WaitForUserResponseAsync();
+
+                //bool reset = await DisplayAlert("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (MaxResets-resetCounter-1)}!", "Yes", "No");
+                if (reset)
                 {
-                    // Reduce totalPossibleWinnings by 1000
-                    maxPossibleWinnings -= 1000;
+                    if (resetCounter < totalResetsAllowed)
+                    {
+                        // Reduce totalPossibleWinnings by 1000
+                        maxPossibleWinnings -= 1000;
 
-                    // Increment the reset counter
-                    resetCounter++;
+                        // Increment the reset counter
+                        resetCounter++;
 
-                    // Reset game state and UI
-                    ResetGame();
+                        // Reset game state and UI
+                        ResetGame();
 
-                    SaveDataToProperties();
+                        SaveDataToProperties();
+                    }
                 }
-            }
-            if (resetCounter == totalResetsAllowed - 1)
-            {
-                ResetButton.IsEnabled = false;
-            }
+                if (resetCounter == totalResetsAllowed - 1)
+                {
+                    ResetButton.IsEnabled = false;
+                }
 
-            ResetButton.IsEnabled = true;
-            hasSelectedSides = false;
+                ResetButton.IsEnabled = true;
+                hasSelectedSides = false;
+            }
+            finally
+            {
+                button.IsEnabled = true;
+            }
         }
 
         // Function to reset the game state and UI
@@ -434,7 +441,7 @@ namespace HeadsOrTails
             ResetButton.IsVisible = false;
             InformationLayout.IsVisible = false;
             SideSelectionLayout.IsVisible = true;
-            CashOutButtonFrame.IsVisible = false;
+            CashOutButton.IsVisible = false;
 
         }
 
@@ -457,10 +464,7 @@ namespace HeadsOrTails
         {
             if (currentWinnings == maxPossibleWinnings)
             {
-                ResetButton.IsVisible = false;
-                CashOutButtonFrame.IsVisible = true;
-                CoinImage.IsEnabled = false;
-                CoinImage.Source = "coin_locked.png";
+                LockGame();
                 return true;
             }
             return false;
@@ -477,13 +481,12 @@ namespace HeadsOrTails
             {
                 // Read the value from the Firebase Realtime Database
                 totalGiveawayFunds = await GetRemainingGiveawayFundsAsync();
-                TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds.ToString("N0")}";
 
-                // Update the label with the retrieved value
-                //MainThread.BeginInvokeOnMainThread(() =>
-                //{
-                //    mulla.Text = $"N{value}";
-                //});
+                //Update the label with the retrieved value
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds.ToString("N0")}";
+                });
 
                 // Wait for the specified interval before reading again
                 await Task.Delay(interval);
@@ -492,9 +495,79 @@ namespace HeadsOrTails
 
         private async void OnCashOutClicked(object sender, EventArgs e)
         {
-            await CashOutButtonFrame.ScaleTo(1.3, 100);
-            await CashOutButtonFrame.ScaleTo(1, 100);
-            await DisplayAlert("Thank you for playing!", $"Are you sure you want to cashout your winnings of {currentWinnings}?", "Yes", "No");
+            // Disable the button
+            Button button = (Button)sender;
+            button.IsEnabled = false;
+
+            try
+            {
+                await CommonFunctions.AnimateButton((Button)sender);
+
+                var customAlertPage = new CustomAlertPage("Thank you for playing!", $"Are you sure you want to cashout your winnings of N{currentWinnings}?", "Yes", "No", true, true);
+                await Navigation.PushModalAsync(customAlertPage);
+                bool cashOutNow = await customAlertPage.WaitForUserResponseAsync();
+
+                if (cashOutNow)
+                {
+                    LockGame();
+                    CashOutDetails cashOutDetails = new()
+                    {
+                        Name = userData.Name,
+                        UID = userData.UID,
+                        EmailAddress = userData.EmailAddress,
+                        Sex = null,
+                        DeviceInfo = userData.DeviceInfo ?? "",
+                        BankAccountNumber = "0123456789",
+                        CashoutAmount = activeGame.CurrentWinnings
+                    };
+
+                    try
+                    {
+                        //Post the dictionary to Firebase under the specified parent and child keys
+                        await firebaseClient.Child("Cashouts").Child(userData.UID).PatchAsync(cashOutDetails);
+
+                        customAlertPage = new CustomAlertPage("Cash Out Success", "We will be in touch soon", "Ok", "", true, false);
+                        await Navigation.PushModalAsync(customAlertPage);
+                        bool cashedout = await customAlertPage.WaitForUserResponseAsync();
+
+                        if (cashedout)
+                        {
+                            button.IsVisible = false;
+                            UpdateLeftoverGiveawayFunds();
+                        }
+                    }
+                    catch (FirebaseException ex)
+                    {
+                        Console.WriteLine($"Error posting data to Firebase: {ex.Message}");
+                        // Handle the exception as needed. Maybe store in sqlite and try 
+                        //to send to firebase later
+                        customAlertPage = new CustomAlertPage("Error", "Cash out failed, please try agian", "Ok", "", true, false);
+                        await Navigation.PushModalAsync(customAlertPage);
+                        await customAlertPage.WaitForUserResponseAsync();
+                    }
+                }
+            }
+            finally
+            {
+                button.IsEnabled = true;
+            }
+        }
+
+        private async void UpdateLeftoverGiveawayFunds()
+        {
+            var firebaseObj = firebaseClient.Child("GiveAways/A/LeftoverGiveawayFunds");
+            var leftOverGiveawayFunds = await firebaseObj.OnceSingleAsync<string>();
+            await firebaseObj.PutAsync(int.Parse(leftOverGiveawayFunds) - activeGame.CurrentWinnings);
+        }
+        private void LockGame()
+        {
+            ResetButton.IsVisible = false;
+            CashOutButton.IsVisible = true;
+            CoinImage.IsEnabled = false;
+            CoinImage.Source = "coin_locked.png";
+
+            //Write to db signifying end of game
+
         }
     }
 }

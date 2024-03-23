@@ -16,6 +16,28 @@
                 <Setter Property="HorizontalOptions" Value="FillAndExpand" />
             </Style>
 
+            <!-- Custom button style -->
+            <Style x:Key="CustomButtonStyle" TargetType="Button">
+                <Setter Property="Text" Value="Custom Button" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="BackgroundColor" Value="Green" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="BorderColor" Value="#fffff0" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Margin" Value="20" />
+                <!-- Add more setters for other properties as needed -->
+                <Style.Triggers>
+                    <!-- Change appearance when button is disabled -->
+                    <Trigger TargetType="Button" Property="IsEnabled" Value="False">
+                        <Setter Property="BackgroundColor" Value="Green" />
+                        <Setter Property="TextColor" Value="White" />
+                        <Setter Property="BorderColor" Value="#fffff0" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
             <Style x:Key="FrameStyle" TargetType="Frame">
                 <Setter Property="BackgroundColor" Value="#F0F0F0" />
                 <Setter Property="CornerRadius" Value="20" />
