@@ -4,7 +4,7 @@ using System.Reflection;
 using Firebase.Database;
 using Microsoft.Maui.Storage;
 
-namespace HeadsOrTails;
+namespace JusGiveaway;
 
 public partial class SignInPage : ContentPage
 {

@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace HeadsOrTails
+namespace JusGiveaway
 {
     [Application]
     public class MainApplication : MauiApplication

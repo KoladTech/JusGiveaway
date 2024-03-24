@@ -1,7 +1,7 @@
 using Firebase.Database;
 using Firebase.Database.Query;
 
-namespace HeadsOrTails;
+namespace JusGiveaway;
 
 public partial class HeadsOrTails : ContentPage
 {
@@ -44,7 +44,7 @@ public partial class HeadsOrTails : ContentPage
         //    // Code to run only once goes here
         //    //TODO Only do this when app first runs
         //    var assembly = IntrospectionExtensions.GetTypeInfo(typeof(App)).Assembly;
-        //    using (Stream stream = assembly.GetManifestResourceStream("HeadsOrTails.HeadsorTailsGameData.db3"))
+        //    using (Stream stream = assembly.GetManifestResourceStream("JusGiveaway.HeadsorTailsGameData.db3"))
         //    {
         //        using (MemoryStream memoryStream = new MemoryStream())
         //        {

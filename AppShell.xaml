@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell
-    x:Class="HeadsOrTails.AppShell"
+    x:Class="JusGiveaway.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:HeadsOrTails"
+    xmlns:local="clr-namespace:JusGiveaway"
     Shell.FlyoutBehavior="Disabled"
-    Title="HeadsOrTails">
+    Title="JusGiveaway">
 
     <ShellContent
         Title="Home"

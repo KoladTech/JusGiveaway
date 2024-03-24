@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace HeadsOrTails
+namespace JusGiveaway
 {
     public partial class App : Application
     {

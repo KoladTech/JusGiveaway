@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HeadsOrTails
+namespace JusGiveaway
 {
     //public class MySQLHelper
     //{

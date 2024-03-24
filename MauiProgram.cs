@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace HeadsOrTails
+namespace JusGiveaway
 {
     public static class MauiProgram
     {

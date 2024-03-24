@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HeadsOrTails
+namespace JusGiveaway
 {
     public static class CommonFunctions
     {

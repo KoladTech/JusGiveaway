@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace HeadsOrTails
+namespace JusGiveaway
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

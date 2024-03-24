@@ -1,4 +1,4 @@
-namespace HeadsOrTails;
+namespace JusGiveaway;
 
 public partial class LoadingPopup : ContentView
 {

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FirebaseAuthException = Firebase.Auth.FirebaseAuthException;
 
-namespace HeadsOrTails
+namespace JusGiveaway
 {
     internal class FirebaseAuthHelper
     {

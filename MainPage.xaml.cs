@@ -1,6 +1,6 @@
 ﻿using Firebase.Auth;
 
-namespace HeadsOrTails;
+namespace JusGiveaway;
 
 public partial class MainPage : ContentPage
 {

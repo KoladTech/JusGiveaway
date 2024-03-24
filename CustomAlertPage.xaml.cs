@@ -1,4 +1,4 @@
-namespace HeadsOrTails;
+namespace JusGiveaway;
 
 [XamlCompilation(XamlCompilationOptions.Compile)]
 public partial class CustomAlertPage : ContentPage

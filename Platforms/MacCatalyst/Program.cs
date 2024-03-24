@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace HeadsOrTails
+namespace JusGiveaway
 {
     public class Program
     {
