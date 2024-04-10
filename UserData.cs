@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JusGiveaway
 {
-    internal class UserData
+    public class UserData
     {
         // Constructor with no parameters
         public UserData()

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JusGiveaway
 {
-    class GameData
+    public class GameData
     {
         // Default constructor
         public GameData()

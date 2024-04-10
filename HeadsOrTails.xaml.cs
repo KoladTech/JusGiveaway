@@ -16,7 +16,6 @@ public partial class HeadsOrTails : ContentPage
     private int currentWinnings = 0;
     private int maxPossibleWinnings = 0;
     private double totalGiveawayFunds = 0;
-    private int totalResetsAllowed = 0;
     private const string coinFrontImage = "kobo_front.png";
     private const string coinBackImage = "kobo_back.png";
 
@@ -26,17 +25,18 @@ public partial class HeadsOrTails : ContentPage
     private readonly SQLiteDBHelper dbHelper;
     private readonly UserData userData;
     private GameData activeGame;
-    FirebaseClient firebaseClient = FirebaseClientHelper.Instance.GetFirebaseClient();
+    private readonly FirebaseClient firebaseClient;// = FirebaseClientHelper.Instance.GetFirebaseClient();
+    private Dictionary<string, string> firebaseGiveawayData;
 
-    public HeadsOrTails()
+    public HeadsOrTails(Dictionary<string,string> firebaseGiveawayData)
 	{
 		InitializeComponent();
 
         dbHelper = new();
         userData = dbHelper.GetUserData()[0];
         activeGame = dbHelper.GetRowWithMaxId();
-
-        //MySQLHelper.ConnectAndQuery();
+        firebaseClient = FirebaseClientHelper.Instance.GetFirebaseClient();
+        this.firebaseGiveawayData = firebaseGiveawayData;
 
         //// Check if the code has been run before
         //if (!Preferences.ContainsKey("CodeExecuted"))
@@ -66,20 +66,20 @@ public partial class HeadsOrTails : ContentPage
             isHeadsChosen = true;
         }
 
-        GameData lastGame = new GameData();
-        lastGame = dbHelper.GetRowWithMaxId();
+        //GameData lastGame = new GameData();
+        //lastGame = dbHelper.GetRowWithMaxId();
 
-        if (lastGame != null && lastGame.SelectedSides == 1)
+        if (activeGame != null && activeGame.SelectedSides == 1)
         {
-            uID = lastGame.UID;
-            hasSelectedSides = lastGame.SelectedSides == 1;
-            isHeadsChosen = lastGame.PlayingHeads == 1;
-            headsCount = lastGame.HeadsCount;
-            tailsCount = lastGame.TailsCount;
+            uID = activeGame.UID;
+            hasSelectedSides = activeGame.SelectedSides == 1;
+            isHeadsChosen = activeGame.PlayingHeads == 1;
+            headsCount = activeGame.HeadsCount;
+            tailsCount = activeGame.TailsCount;
             totalFlips = headsCount + tailsCount;
-            maxPossibleWinnings = lastGame.MaxPossibleWinnings;
-            currentWinnings = lastGame.CurrentWinnings;
-            resetCounter = lastGame.TotalResetsUsed;
+            maxPossibleWinnings = activeGame.MaxPossibleWinnings;
+            currentWinnings = activeGame.CurrentWinnings;
+            resetCounter = activeGame.TotalResetsUsed;
 
             // Set UI with DB values
             UpdateCounts();
@@ -89,7 +89,7 @@ public partial class HeadsOrTails : ContentPage
 
             SaveDataToProperties();
         }
-        else if (lastGame != null)
+        else if (activeGame != null)
         {
             hasSelectedSides = false;
             maxPossibleWinnings = activeGame.MaxPossibleWinnings;
@@ -107,15 +107,20 @@ public partial class HeadsOrTails : ContentPage
         //    await UserChoiceImage.RotateXTo(180, 100, Easing.SinInOut); // Rotate the coin around the X-axis by 180 degrees in 200 milliseconds
         //    CoinImage.RotationX = 0; // Reset rotation to 0
         //}
+
         UpdateTotalGiveawayFundsLabelTimer();
     }
 
-    public async Task<double> GetRemainingGiveawayFundsAsync()
+    public Task<double> GetRemainingGiveawayFundsAsync(Dictionary<string, string> giveawayData)
     {
-        var giveaway = await firebaseClient.Child("GiveAways/A").OnceSingleAsync<Dictionary<string, string>>();
-        //totalResetsAllowed = int.Parse(giveaway["TotalResetsAllowed"]);
-        return double.Parse(giveaway["LeftoverGiveawayFunds"]);
+        if (giveawayData == null)
+        {
+            return Task.FromResult<double>(0);
+        }
+        
+        return Task.FromResult(double.Parse(giveawayData["LeftoverGiveawayFunds"]));
     }
+
     private void SaveDataToProperties()
     {
         // Store data in Application Properties
@@ -184,7 +189,7 @@ public partial class HeadsOrTails : ContentPage
             activeGame.SelectedSides = 1;
             activeGame.PlayingHeads = isHeadsChosen ? 1 : 0;
             dbHelper.UpdateItem(activeGame);
-            totalGiveawayFunds = await GetRemainingGiveawayFundsAsync();
+            totalGiveawayFunds = await GetRemainingGiveawayFundsAsync(firebaseGiveawayData);
             TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds.ToString("NO")}";
         }
     }
@@ -350,14 +355,15 @@ public partial class HeadsOrTails : ContentPage
             //ResetButtonFrame.BackgroundColor = Color.FromRgb(169, 169, 169);
             //ResetButton.IsEnabled = false;
 
-            var customAlertPage = new CustomAlertPage("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (totalResetsAllowed - resetCounter - 1)}!");
+            var customAlertPage = new CustomAlertPage("Reset Game?", $"Your total maximum winnings will be reduced to N{maxPossibleWinnings - 1000}!");
             await Navigation.PushModalAsync(customAlertPage);
             bool reset = await customAlertPage.WaitForUserResponseAsync();
 
             //bool reset = await DisplayAlert("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (MaxResets-resetCounter-1)}!", "Yes", "No");
             if (reset)
             {
-                if (resetCounter < totalResetsAllowed)
+                if (resetCounter < int.Parse(firebaseGiveawayData["TotalResetsAllowed"])
+)
                 {
                     // Reduce totalPossibleWinnings by 1000
                     maxPossibleWinnings -= 1000;
@@ -371,7 +377,7 @@ public partial class HeadsOrTails : ContentPage
                     SaveDataToProperties();
                 }
             }
-            if (resetCounter == totalResetsAllowed - 1)
+            if (resetCounter == int.Parse(firebaseGiveawayData["TotalResetsAllowed"]) - 1)
             {
                 ResetButton.IsEnabled = false;
             }
@@ -429,8 +435,10 @@ public partial class HeadsOrTails : ContentPage
 
 
         PotentialWinningLabel.Text = "Potential Winnings: N0";
-        TotalPossibleWinningsLabel.Text = $"Maximum win : N{1000 * (totalResetsAllowed - resetCounter)}";
+        TotalPossibleWinningsLabel.Text = $"Maximum win : N{maxPossibleWinnings}";
 
+        Header.IsVisible = false;
+        Titlelayout.IsVisible = false;
         SelectionButton.IsVisible = true;
         UserChoiceLabel.Text = "Heads or Tails";
         CoinFlipLayout.IsVisible = false;
@@ -445,6 +453,7 @@ public partial class HeadsOrTails : ContentPage
 
     private void startGameUISetup(string username, string choice, int maxPossibleWinning, int potentialWinning)
     {
+        Header.IsVisible = true;
         UserChoiceLabel.Text = $"{username} : {choice}";
         TotalPossibleWinningsLabel.Text = $"Maximum Win: N{maxPossibleWinning}";
         PotentialWinningLabel.Text = $"Potential Winnings: N{potentialWinning}";
@@ -453,6 +462,7 @@ public partial class HeadsOrTails : ContentPage
         CoinFlipLayout.IsVisible = true;
         ResetButton.IsVisible = true;
         InformationLayout.IsVisible = true;
+        Titlelayout.IsVisible = true;
         Titlelayout.Orientation = StackOrientation.Horizontal;
         UserChoiceImage.IsVisible = false;
         TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds}";
@@ -478,12 +488,14 @@ public partial class HeadsOrTails : ContentPage
         while (true)
         {
             // Read the value from the Firebase Realtime Database
-            totalGiveawayFunds = await GetRemainingGiveawayFundsAsync();
+            totalGiveawayFunds = await GetRemainingGiveawayFundsAsync(firebaseGiveawayData);
+            var totalNumOfPlayers = int.Parse(firebaseGiveawayData["NumberOfPlayers"]);
 
             //Update the label with the retrieved value
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds.ToString("N0")}";
+                TotalRegisteredPlayers.Text = $"# of Players - {totalNumOfPlayers}";
             });
 
             // Wait for the specified interval before reading again
@@ -507,42 +519,44 @@ public partial class HeadsOrTails : ContentPage
 
             if (cashOutNow)
             {
-                LockGame();
-                CashOutDetails cashOutDetails = new()
-                {
-                    Name = userData.Name,
-                    UID = userData.UID,
-                    EmailAddress = userData.EmailAddress,
-                    Sex = null,
-                    DeviceInfo = userData.DeviceInfo ?? "",
-                    BankAccountNumber = "0123456789",
-                    CashoutAmount = activeGame.CurrentWinnings
-                };
+                await Navigation.PushAsync(new CashoutForm(userData, activeGame));
 
-                try
-                {
-                    //Post the dictionary to Firebase under the specified parent and child keys
-                    await firebaseClient.Child("Cashouts").Child(userData.UID).PatchAsync(cashOutDetails);
+                //LockGame();
+                //CashOutDetails cashOutDetails = new()
+                //{
+                //    Name = userData.Name,
+                //    UID = userData.UID,
+                //    EmailAddress = userData.EmailAddress,
+                //    Sex = null,
+                //    DeviceInfo = userData.DeviceInfo ?? "",
+                //    BankAccountNumber = "0123456789",
+                //    CashoutAmount = activeGame.CurrentWinnings
+                //};
 
-                    customAlertPage = new CustomAlertPage("Cash Out Success", "We will be in touch soon", "Ok", "", true, false);
-                    await Navigation.PushModalAsync(customAlertPage);
-                    bool cashedout = await customAlertPage.WaitForUserResponseAsync();
+                //try
+                //{
+                //    //Post the dictionary to Firebase under the specified parent and child keys
+                //    await firebaseClient.Child("Cashouts").Child(userData.UID).PatchAsync(cashOutDetails);
 
-                    if (cashedout)
-                    {
-                        button.IsVisible = false;
-                        UpdateLeftoverGiveawayFunds();
-                    }
-                }
-                catch (FirebaseException ex)
-                {
-                    Console.WriteLine($"Error posting data to Firebase: {ex.Message}");
-                    // Handle the exception as needed. Maybe store in sqlite and try 
-                    //to send to firebase later
-                    customAlertPage = new CustomAlertPage("Error", "Cash out failed, please try agian", "Ok", "", true, false);
-                    await Navigation.PushModalAsync(customAlertPage);
-                    await customAlertPage.WaitForUserResponseAsync();
-                }
+                //    customAlertPage = new CustomAlertPage("Cash Out Success", "We will be in touch soon", "Ok", "", true, false);
+                //    await Navigation.PushModalAsync(customAlertPage);
+                //    bool cashedout = await customAlertPage.WaitForUserResponseAsync();
+
+                //    if (cashedout)
+                //    {
+                //        button.IsVisible = false;
+                //        UpdateLeftoverGiveawayFunds();
+                //    }
+                //}
+                //catch (FirebaseException ex)
+                //{
+                //    Console.WriteLine($"Error posting data to Firebase: {ex.Message}");
+                //    // Handle the exception as needed. Maybe store in sqlite and try 
+                //    //to send to firebase later
+                //    customAlertPage = new CustomAlertPage("Error", "Cash out failed, please try agian", "Ok", "", true, false);
+                //    await Navigation.PushModalAsync(customAlertPage);
+                //    await customAlertPage.WaitForUserResponseAsync();
+                //}
             }
         }
         finally
@@ -551,12 +565,6 @@ public partial class HeadsOrTails : ContentPage
         }
     }
 
-    private async void UpdateLeftoverGiveawayFunds()
-    {
-        var firebaseObj = firebaseClient.Child("GiveAways/A/LeftoverGiveawayFunds");
-        var leftOverGiveawayFunds = await firebaseObj.OnceSingleAsync<string>();
-        await firebaseObj.PutAsync(int.Parse(leftOverGiveawayFunds) - activeGame.CurrentWinnings);
-    }
     private void LockGame()
     {
         ResetButton.IsVisible = false;

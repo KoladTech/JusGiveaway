@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyBQ9Up18F6Lp9FDMSJLEylWVoVnurUb68U</string>
+	<string>AIzaSyAxWUO1gi4kcmOfUK9p8r5-CxHyyEb23a4</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1026292445158</string>
+	<string>198930201765</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.companyname.headsortails</string>
+	<string>com.companyname.jusgiveaway</string>
 	<key>PROJECT_ID</key>
-	<string>headsortails-c1e0b</string>
+	<string>jusgiveaway</string>
 	<key>STORAGE_BUCKET</key>
-	<string>headsortails-c1e0b.appspot.com</string>
+	<string>jusgiveaway.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1026292445158:ios:dcaa4002d34a9fa4ccb027</string>
+	<string>1:198930201765:ios:da78477b44a265b92ca14c</string>
 </dict>
 </plist>

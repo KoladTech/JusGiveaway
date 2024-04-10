@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1026292445158",
-    "project_id": "headsortails-c1e0b",
-    "storage_bucket": "headsortails-c1e0b.appspot.com"
+    "project_number": "198930201765",
+    "project_id": "jusgiveaway",
+    "storage_bucket": "jusgiveaway.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1026292445158:android:3008a011c05a5894ccb027",
+        "mobilesdk_app_id": "1:198930201765:android:8ab464a1c4eaa4032ca14c",
         "android_client_info": {
-          "package_name": "com.companyname.headsortails"
+          "package_name": "com.companyname.jusgiveaway"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCFViNHQ81CR89Jcag01BOMVODjKYbXLxE"
+          "current_key": "AIzaSyA-WcxOGCdd56pOAdLrYpsqTl4NnI7WLvw"
         }
       ],
       "services": {

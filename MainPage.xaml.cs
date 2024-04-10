@@ -1,24 +1,24 @@
 ﻿using Firebase.Auth;
+using Firebase.Database;
 
 namespace JusGiveaway;
 
 public partial class MainPage : ContentPage
 {
+    private readonly FirebaseClient firebaseClient;
     public MainPage()
     {
-        InitializeComponent();
-
-        //return new Window(new NavigationPage(new MainPage()));
-
-        //await Navigation.PushAsync(new MainPage());
+        InitializeComponent(); 
+        firebaseClient = FirebaseClientHelper.Instance.GetFirebaseClient();
     }
 
     private async void OnHeadsOrTailsGameButtonClicked(object sender, EventArgs e)
     {
         await CommonFunctions.AnimateButton((Button)sender);
 
-        await Navigation.PushAsync(new HeadsOrTails());
+        var firebaseGiveawayData = await CommonFunctions.GetGameDataFromFirebaseAsync(firebaseClient);
 
+        await Navigation.PushAsync(new HeadsOrTails(firebaseGiveawayData));
     }
 
 }

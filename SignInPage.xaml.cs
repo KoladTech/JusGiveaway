@@ -10,6 +10,9 @@ public partial class SignInPage : ContentPage
 {
     private readonly SQLiteDBHelper dbHelper;
     private readonly List<UserData> userData;
+    private readonly FirebaseClient firebaseClient;// = FirebaseClientHelper.Instance.GetFirebaseClient();
+    private UserCredential? user;
+
     public SignInPage()
 	{
 		InitializeComponent();
@@ -17,43 +20,13 @@ public partial class SignInPage : ContentPage
         dbHelper = new();
         userData = dbHelper.GetUserData();
         SignInEmailEntry.Text = userData[0].EmailAddress;
-    }
-
-    private async Task<object> GetGameSetupData()
-    {
-        // Create a Firebase client
-        FirebaseClient firebaseClient;
-        firebaseClient = new FirebaseClient("https://headsortails-c1e0b-default-rtdb.europe-west1.firebasedatabase.app/");
-        // Read the value from the Firebase Realtime Database
-        var res = await firebaseClient.Child("GameSetupData").OnceAsync<object>();
-        var res2 = await firebaseClient.Child("GameSetupData/Giver").OnceSingleAsync<string>();
-
-        
-        return res;
-    }
-
-    public async Task<Dictionary<string, string>> GetGameSetupDataAsync()
-    {
-        try
-        {
-            // Create a Firebase client
-            FirebaseClient firebaseClient;
-            firebaseClient = new FirebaseClient("https://headsortails-c1e0b-default-rtdb.europe-west1.firebasedatabase.app/");
-            // Get data from Firebase Realtime Database
-            var data = await firebaseClient.Child("GameSetupData").OnceSingleAsync<Dictionary<string, string>>();
-          
-            return data;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting data: {ex.Message}");
-            return null;
-        }
+        user = null;
+        firebaseClient = FirebaseClientHelper.Instance.GetFirebaseClient();
     }
 
     private async void OnSignInCompleted(object sender, EventArgs e)
     {
-        var gameSetupData = await GetGameSetupDataAsync();
+        var gameSetupData = await CommonFunctions.GetGameDataFromFirebaseAsync(firebaseClient);
 
         //create first game in sqlite db
         //SQLiteDBHelper dbHelper = new();
@@ -65,7 +38,7 @@ public partial class SignInPage : ContentPage
             {
                 UID = userData[0].UID,
                 MaxPossibleWinnings = int.Parse(gameSetupData["MaxPossibleWinningsPerPerson"]),
-                MinCashOut = int.Parse(gameSetupData["MinCashOut"]),
+                MinCashOut = int.Parse(gameSetupData["MinCashoutPerPerson"]),
             };
             dbHelper.InsertItem(newGame);
         }
@@ -87,7 +60,7 @@ public partial class SignInPage : ContentPage
         List<UserData> items = dbHelper.GetUserData();
 
         //sign in
-        UserCredential? user = await FirebaseAuthHelper.Instance.SignInUserWithEmailAndPasswordAsync(email, pwd);
+        user = await FirebaseAuthHelper.Instance.SignInUserWithEmailAndPasswordAsync(email, pwd);
         if (user != null)
         {
             // Registration successful
@@ -99,6 +72,7 @@ public partial class SignInPage : ContentPage
             // Navigate to the next page or perform any other action
             OnSignInCompleted(sender, e);
             Preferences.Set("UserSignedIn", true);
+
         }
         else
         {

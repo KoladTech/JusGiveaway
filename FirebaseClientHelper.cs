@@ -14,7 +14,7 @@ namespace JusGiveaway
 
         private FirebaseClientHelper()
         {
-            firebaseClient = new FirebaseClient("https://headsortails-c1e0b-default-rtdb.europe-west1.firebasedatabase.app/");
+            firebaseClient = new FirebaseClient("https://jusgiveaway-default-rtdb.europe-west1.firebasedatabase.app/");
         }
 
         public static FirebaseClientHelper Instance

@@ -15,7 +15,7 @@ namespace JusGiveaway
         private static FirebaseAuthHelper instance;
         private static FirebaseAuthClient client;
 
-        public string webApiKey = "AIzaSyCFViNHQ81CR89Jcag01BOMVODjKYbXLxE";
+        public string webApiKey = "AIzaSyA-WcxOGCdd56pOAdLrYpsqTl4NnI7WLvw";
 
         private FirebaseAuthHelper()
         {
@@ -24,7 +24,7 @@ namespace JusGiveaway
             var config = new FirebaseAuthConfig
             {
                 ApiKey = webApiKey,
-                AuthDomain = "headsortails-c1e0b.firebaseapp.com",
+                AuthDomain = "jusgiveaway.firebaseapp.com",
                 Providers = new FirebaseAuthProvider[]
                 {
                     // Add and configure individual providers
