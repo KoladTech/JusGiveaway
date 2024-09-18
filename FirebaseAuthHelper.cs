@@ -62,7 +62,17 @@ namespace JusGiveaway
             {
                 // Handle any authentication errors
                 Console.WriteLine($"Error registering user: {ex.Message}");
-                return null;
+
+                if (ex.Message.Contains("EMAIL_EXISTS"))
+                {
+                    throw new InvalidOperationException("This email is already registered to a user", ex);
+                }
+
+                // Handle any authentication errors and throw a custom message
+                throw new InvalidOperationException("Error encountered during user registration", ex);
+
+                //throw;
+                //return null;
             }
         }
 

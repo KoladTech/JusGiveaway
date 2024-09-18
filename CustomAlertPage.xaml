@@ -8,11 +8,13 @@
     <ContentView BackgroundColor="Transparent" Padding="20" VerticalOptions="Center">
         <Frame CornerRadius="10" BackgroundColor="White" Padding="20">
             <StackLayout>
-                <Label Text="{Binding Title}" FontSize="20" HorizontalOptions="Center" Margin="0,0,0,10"/>
-                <Label Text="{Binding Message}" FontSize="16" HorizontalOptions="Center" Margin="0,0,0,20"/>
+                <Label Text="{Binding AlertTitle}" FontSize="20" HorizontalOptions="Center" Margin="0,0,0,10"/>
+                <Label Text="{Binding AlertMessage}" FontSize="16" HorizontalOptions="Center" Margin="0,0,0,20"/>
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
-                    <Button Text="{Binding Yes}" Clicked="OnYesClicked" IsVisible="{Binding ShowYes}" />
-                    <Button Text="{Binding No}" Clicked="OnNoClicked" IsVisible="{Binding ShowNo}" />
+                    <Button Text="{Binding PrimaryBtnText}" Clicked="OnYesClicked" IsVisible="{Binding ShowPrimaryBtn}" 
+                            BackgroundColor="{Binding PrimaryButtonColor}" FontSize="16" HorizontalOptions="FillAndExpand" />
+                    <Button Text="{Binding SecondaryBtnText}" Clicked="OnNoClicked" IsVisible="{Binding ShowSecondaryBtn}"
+                            BackgroundColor="{Binding SecondaryButtonColor}" FontSize="16" HorizontalOptions="FillAndExpand" />
                 </StackLayout>
             </StackLayout>
         </Frame>

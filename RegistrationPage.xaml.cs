@@ -4,19 +4,32 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using static JusGiveaway.CustomAlertPage;
+using CommunityToolkit.Maui.Alerts;
 
 namespace JusGiveaway;
 
 public partial class RegistrationPage : ContentPage
 {
+    private readonly SQLiteDBHelper dbHelper;
+    private UserData userData;
     private readonly Regex emailRegex = new(@"^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$");
 
 	public RegistrationPage()
 	{
 		InitializeComponent();
+        dbHelper = new();
+
+        //var customDrawable = new CustomBarGraphDrawable(0.2f, 0.4f);
+        //var graphicsView = new GraphicsView
+        //{
+        //    Drawable = customDrawable
+        //};
+
+        //Content = graphicsView;
 
         // Check if the code has been run before
-        if (!Preferences.ContainsKey("CodeExecuted"))
+        if (!Preferences.ContainsKey("SQLiteDBCreated"))
         {
             // Code to run only once goes here
             //TODO Only do this when app first runs
@@ -31,24 +44,8 @@ public partial class RegistrationPage : ContentPage
                 }
             }
             // Set a flag indicating that the code has been executed
-            Preferences.Set("CodeExecuted", true);
+            Preferences.Set("SQLiteDBCreated", true);
         }
-    }
-    private async void OnRegistrationCompleted(object sender, EventArgs e, User user)
-    {
-        //store userdata in sqlite db
-        SQLiteDBHelper dbHelper = new();
-        UserData userData = new()
-        {
-            Name = user.Info.DisplayName,
-            UID = user.Uid,
-            EmailAddress = user.Info.Email,
-            DeviceInfo = JsonConvert.SerializeObject(getPhoneInfo())
-        };
-        dbHelper.InsertItem(userData);
-        Preferences.Set("UserRegistered", true);
-        // Navigate to SignInPage after registration
-        await Navigation.PushAsync(new SignInPage());
     }
 
     private Dictionary<string, string> getPhoneInfo()
@@ -68,30 +65,80 @@ public partial class RegistrationPage : ContentPage
 
     private async void OnRegisterClicked(object sender, EventArgs e)
     {
+        CommonFunctions.ToggleActivityIndicator(RegistrationInProgressIndicator, RegisterButton);
         await CommonFunctions.AnimateButton((Button)sender);
 
         string userName = NameEntry.Text;
         string email = EmailEntry.Text;
         string pwd = PwdEntry.Text;
 
-        // Register user with email and password
-        UserCredential? user = await FirebaseAuthHelper.Instance.RegisterUserWithEmailAndPasswordAsync(email, pwd, userName);
+        UserCredential? user = null;
+        try
+        {
+            // Register user with email and password
+            user = await FirebaseAuthHelper.Instance.RegisterUserWithEmailAndPasswordAsync(email, pwd, userName);
+        }
+        catch (Exception ex)
+        {
+            await CommonFunctions.DisplayCustomAlertPage(
+                "Failed to register user", ex.Message,
+                "Close", "", true, false, AlertType.Error, Navigation);
+            return;
+        }
+        finally
+        {
+            CommonFunctions.ToggleActivityIndicator(RegistrationInProgressIndicator, RegisterButton);
+        }
         if (user != null)
         {
             // Registration successful
-            var customAlertPage = new CustomAlertPage("Success", $"{user.User.Info.DisplayName} registered successfully!", "Ok", "", true, false);
-            await Navigation.PushModalAsync(customAlertPage);
-            await customAlertPage.WaitForUserResponseAsync();
+            await Toast.Make($"{user.User.Info.DisplayName} registered successfully!", CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
+
+            //await CommonFunctions.DisplayCustomAlertPage(
+            //    "Success", $"{user.User.Info.DisplayName} registered successfully!", "Ok", "", true, false,
+            //    AlertType.Info, Navigation);
+            //var customAlertPage = new CustomAlertPage("Success", $"{user.User.Info.DisplayName} registered successfully!", "Ok", "", true, false);
+            //await Navigation.PushModalAsync(customAlertPage);
+            //await customAlertPage.WaitForUserResponseAsync();
             // Navigate to the next page or perform any other action
             OnRegistrationCompleted(sender, e, user.User);
         }
         else
         {
             // Registration failed
-            var customAlertPage = new CustomAlertPage("Error", "Failed to register user", "Ok", "", true, false);
-            await Navigation.PushModalAsync(customAlertPage);
-            await customAlertPage.WaitForUserResponseAsync();
+            await CommonFunctions.DisplayCustomAlertPage(
+                "Error", "Failed to register user",
+                "Close", "", true, false, AlertType.Error, Navigation);
+            //var customAlertPage = new CustomAlertPage("Error", "Failed to register user", "Ok", "", true, false);
+            //await Navigation.PushModalAsync(customAlertPage);
+            //await customAlertPage.WaitForUserResponseAsync();
         }
+    }
+    private async void OnRegistrationCompleted(object sender, EventArgs e, User user)
+    {
+        //store userdata in sqlite db
+        //SQLiteDBHelper dbHelper = new();
+        userData = new()
+        {
+            Name = user.Info.DisplayName,
+            UID = user.Uid,
+            EmailAddress = user.Info.Email,
+            DeviceInfo = JsonConvert.SerializeObject(getPhoneInfo())
+        };
+
+        try
+        {
+            dbHelper.InsertItem(userData);
+        }
+        catch (Exception)
+        {
+            await CommonFunctions.DisplayCustomAlertPage(
+                "Error", "Failed to save user info, please contact app admins",
+                "Close", "", true, false, AlertType.Error, Navigation);
+        }
+        Preferences.Set("UserRegistered", true);
+        // Navigate to SignInPage after registration
+        await Navigation.PushAsync(new SignInPage());
     }
 
     private void OnUserNameTextChanged(object sender, TextChangedEventArgs e)
@@ -113,12 +160,14 @@ public partial class RegistrationPage : ContentPage
             if (!emailRegex.IsMatch(EmailEntry.Text))
             {
                 // Invalid email format
-                EmailEntry.TextColor = Color.FromRgb(255, 0, 0); // Optional: Set text color to indicate invalid input
+                EmailEntry.TextColor = Color.Parse("red");
+                //EmailEntry.TextColor = Color.FromRgb(255, 0, 0); // Optional: Set text color to indicate invalid input
                 // Optionally show an error message to the user
             }
             else
             {
                 // Valid email format
+                //EmailEntry.TextColor = Color.Parse("red");
                 EmailEntry.TextColor = Color.FromRgb(0, 0, 0); // Reset text color
             }
         }
@@ -139,6 +188,12 @@ public partial class RegistrationPage : ContentPage
 
     private bool IsPasswordValid(string password)
     {
+        // Update the UI based on the validation
+        LengthCriteria.IsVisible = !(password.Length >= 8);
+        NumberCriteria.IsVisible = !(password.Any(char.IsDigit));
+        SpecialCharCriteria.IsVisible = !(password.Any(ch => !char.IsLetterOrDigit(ch)));
+        UpperCaseCriteria.IsVisible = !(password.Any(char.IsUpper));
+
         // Check for at least one uppercase letter, one lowercase letter, one digit,
         // one special character and a minimum length of six characters
         return (password.Length >= 6 &&
@@ -150,8 +205,25 @@ public partial class RegistrationPage : ContentPage
 
     private void OnConfirmPwdTextChanged(object sender, TextChangedEventArgs e)
     {
-        RegisterButton.IsEnabled = enableRegisterButton(PwdEntry.Text);
+        bool enableRegistrationBtn = enableRegisterButton(PwdEntry.Text);
+
+        if (enableRegistrationBtn)
+        {
+            PwdConfirmEntry.TextColor = Color.FromRgb(0, 0, 0);
+        }
+        else
+        {
+            PwdConfirmEntry.TextColor = Color.Parse("red");
+        }
+        RegisterButton.IsEnabled = enableRegistrationBtn;
     }
+
+    //private async void OnLoginTapped(object sender, EventArgs e)
+    //{
+    //    // Navigate to the login page or perform an action
+    //    await Shell.Current.GoToAsync("//LoginPage");  // Example: Navigate to the login page
+    //}
+
 
     private bool enableRegisterButton(string password) {
 

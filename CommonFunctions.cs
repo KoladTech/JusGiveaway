@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static JusGiveaway.CustomAlertPage;
 
 namespace JusGiveaway
 {
@@ -27,8 +28,33 @@ namespace JusGiveaway
             catch (Exception ex)
             {
                 Console.WriteLine($"Error retrieving data: {ex.Message}");
-                return null;
+                throw;
             }
+        }
+
+        public static async Task<bool> DisplayCustomAlertPage(
+            string title, 
+            string message, 
+            string primaryBtnText, 
+            string secondaryBtnText, 
+            bool showPrimaryBtn, 
+            bool showSecondaryBtn,
+            AlertType alertType,
+            INavigation navigation)
+        {
+            var customAlertPage = new CustomAlertPage(title, message, 
+                primaryBtnText, secondaryBtnText, 
+                showPrimaryBtn, showSecondaryBtn,
+                alertType);
+            await navigation.PushModalAsync(customAlertPage);
+            return await customAlertPage.WaitForUserResponseAsync();
+        }
+
+        public static void ToggleActivityIndicator(ActivityIndicator activityIndicator, Button buttonClicked)
+        {
+            buttonClicked.IsEnabled = !buttonClicked.IsEnabled;
+            activityIndicator.IsVisible = !activityIndicator.IsVisible;
+            activityIndicator.IsRunning = !activityIndicator.IsRunning;
         }
     }
 

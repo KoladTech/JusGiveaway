@@ -39,7 +39,7 @@ public partial class HeadsOrTails : ContentPage
         this.firebaseGiveawayData = firebaseGiveawayData;
 
         //// Check if the code has been run before
-        //if (!Preferences.ContainsKey("CodeExecuted"))
+        //if (!Preferences.ContainsKey("SQLiteDBCreated"))
         //{
         //    // Code to run only once goes here
         //    //TODO Only do this when app first runs
@@ -54,7 +54,7 @@ public partial class HeadsOrTails : ContentPage
         //        }
         //    }
         //    // Set a flag indicating that the code has been executed
-        //    Preferences.Set("CodeExecuted", true);
+        //    Preferences.Set("SQLiteDBCreated", true);
         //}
 
         gameSessionId = dbHelper.GetMaxId();
@@ -197,8 +197,8 @@ public partial class HeadsOrTails : ContentPage
     private async void OnCoinTapped(object sender, EventArgs e)
     {
         CashOutButton.IsVisible = false;
-        CoinImage.IsEnabled = false;
-        totalFlips += 50;
+        ResetButton.IsVisible = true;
+        //CoinImage.IsEnabled = false;
 
         Random random = new Random();
 
@@ -220,16 +220,18 @@ public partial class HeadsOrTails : ContentPage
         if (result == 0)
         {
             //headsCount++;
-            headsCount += 50;
+            headsCount += 5;
             CoinImage.Source = coinFrontImage;
         }
         else
         {
             //tailsCount++;
-            tailsCount += 50;
+            tailsCount += 5;
             CoinImage.Source = coinBackImage;
         }
         //score = (headsCount - tailsCount) * scoreAdjuster;
+
+        totalFlips = headsCount + tailsCount;
 
         // Update UI
         UpdateCounts();
@@ -256,6 +258,11 @@ public partial class HeadsOrTails : ContentPage
         // Update percentage bars
         HeadsProgressBar.Progress = headsPercentage / 100;
         TailsProgressBar.Progress = tailsPercentage / 100;
+
+        headsTailsBar.EvenPercentage = (float)headsPercentage / 100;
+        headsTailsBar.OddPercentage = (float)tailsPercentage / 100;
+        headsTailsBarH.Invalidate();
+
 
         HeadsProgressBarLabel.Text = $"Heads: {headsCount}";
         TailsProgressBarLabel.Text = $"Tails: {tailsCount}";
@@ -304,8 +311,9 @@ public partial class HeadsOrTails : ContentPage
             cashOutMsg = canCashOut ? "\nYou can cashout or Play for more" : "";
             winMsg = $"You win N1000! {cashOutMsg}";
             CashOutButton.IsVisible = canCashOut;
+            ResetButton.IsVisible = !canCashOut;
 
-            PotentialWinningLabel.Text = $"Current Winnings: N{currentWinnings}";
+            PotentialWinningLabel.Text = $"N{currentWinnings}";
 
             if (playerWon)
             {
@@ -434,13 +442,14 @@ public partial class HeadsOrTails : ContentPage
         TailsPercentageLabel.Text = "0%";
 
 
-        PotentialWinningLabel.Text = "Potential Winnings: N0";
-        TotalPossibleWinningsLabel.Text = $"Maximum win : N{maxPossibleWinnings}";
+        PotentialWinningLabel.Text = "N0";
+        TotalPossibleWinningsLabel.Text = $"N{maxPossibleWinnings}";
 
-        Header.IsVisible = false;
-        Titlelayout.IsVisible = false;
+        //Header.IsVisible = false;
+        //Titlelayout.IsVisible = false;
         SelectionButton.IsVisible = true;
-        UserChoiceLabel.Text = "Heads or Tails";
+        PlayerNameLabel.Text = userData.Name;
+        PlayerChoiceLabel.Text = "Heads/Tails";
         CoinFlipLayout.IsVisible = false;
         CoinFrontImage.IsVisible = true;
         CoinBackImage.IsVisible = true;
@@ -453,18 +462,18 @@ public partial class HeadsOrTails : ContentPage
 
     private void startGameUISetup(string username, string choice, int maxPossibleWinning, int potentialWinning)
     {
-        Header.IsVisible = true;
-        UserChoiceLabel.Text = $"{username} : {choice}";
-        TotalPossibleWinningsLabel.Text = $"Maximum Win: N{maxPossibleWinning}";
-        PotentialWinningLabel.Text = $"Potential Winnings: N{potentialWinning}";
+        //Header.IsVisible = true;
+        PlayerNameLabel.Text = username;
+        PlayerChoiceLabel.Text = choice;
+        TotalPossibleWinningsLabel.Text = $"N{maxPossibleWinning}";
+        PotentialWinningLabel.Text = $"N{potentialWinning}";
         SelectionButton.IsVisible = false;
         SideSelectionLayout.IsVisible = false;
         CoinFlipLayout.IsVisible = true;
         ResetButton.IsVisible = true;
         InformationLayout.IsVisible = true;
-        Titlelayout.IsVisible = true;
-        Titlelayout.Orientation = StackOrientation.Horizontal;
-        UserChoiceImage.IsVisible = false;
+        //Titlelayout.IsVisible = true;
+        //Titlelayout.Orientation = StackOrientation.Horizontal;
         TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds}";
     }
 
@@ -495,7 +504,7 @@ public partial class HeadsOrTails : ContentPage
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds.ToString("N0")}";
-                TotalRegisteredPlayers.Text = $"# of Players - {totalNumOfPlayers}";
+                //TotalRegisteredPlayers.Text = $"# of Players - {totalNumOfPlayers}";
             });
 
             // Wait for the specified interval before reading again
@@ -575,4 +584,12 @@ public partial class HeadsOrTails : ContentPage
         //Write to db signifying end of game
 
     }
+
+    //private async void OnSponsoredByClicked()
+    //{
+    //    var customAlertPage = new CustomAlertPage($"This giveaway is sponsored by DavidBukola Foundation", $"{int.Parse(firebaseGiveawayData["NumberOfPlayers"])}");
+    //    var customAlertPage = new CustomAlertPage($"Sponsored by", "This giveaway is sponsored by DavidBukola Foundation", "Ok", "", true, false);
+    //    await Navigation.PushModalAsync(customAlertPage);
+    //    await customAlertPage.WaitForUserResponseAsync();
+    //}
 }

@@ -4,27 +4,60 @@
              x:Class="JusGiveaway.RegistrationPage"
              Title="RegistrationPage"
              NavigationPage.HasNavigationBar="False">
-    <ContentPage.BackgroundImageSource>
+    <!--<ContentPage.BackgroundImageSource>
         <FileImageSource File="mint_green_bckg.jpg" />
-    </ContentPage.BackgroundImageSource>
+    </ContentPage.BackgroundImageSource>-->
     <VerticalStackLayout VerticalOptions="CenterAndExpand" Padding="20">
-        <Label Text="Register account" FontSize="26" FontAttributes="Bold" HorizontalOptions="Center" TextColor="#008000" Padding="10" />
+        <Image Source="avatar_default.png" 
+            WidthRequest="50" 
+            HeightRequest="50" 
+            Aspect="AspectFill" 
+            HorizontalOptions="Center" 
+            VerticalOptions="Start" 
+            Margin="10"/>
+        
+        <Label Text="Sign Up" FontSize="26" FontAttributes="Bold" TextColor="#008000" Padding="5,10,10,10" HorizontalOptions="CenterAndExpand" />
 
-        <Frame x:Name="NameEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+        <Label Text="Username" FontSize="Medium" Padding="5,10,0,0" />
+        <Frame x:Name="NameEntryFrame" Style="{StaticResource FrameStyle}">
             <Entry Style="{StaticResource EntryStyle}" x:Name="NameEntry" Placeholder="Enter your username" MaxLength="10" TextChanged="OnUserNameTextChanged"/>
         </Frame>
-        <Frame x:Name="EmailEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+
+        <Label Text="Email" FontSize="Medium" Padding="5,10,0,0" />
+        <Frame x:Name="EmailEntryFrame" Style="{StaticResource FrameStyle}">
             <Entry Style="{StaticResource EntryStyle}" x:Name="EmailEntry" Placeholder="Enter email" Keyboard="Email" TextChanged="OnEmailTextChanged"/>
         </Frame>
-        <Frame x:Name="PwdEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+
+        <!--<VerticalStackLayout Padding="10">
+            <Entry Style="{StaticResource EntryStyle}" x:Name="PwdEntryss" 
+           Placeholder="Enter password" MaxLength="12" 
+           IsPassword="True" TextChanged="OnPasswordTextChanged"/>
+
+            --><!-- List of password criteria --><!--
+            <VerticalStackLayout x:Name="PasswordCriteriaLayout">
+                <Label x:Name="LengthCriteria" Text="At least 8 characters" TextColor="Red"/>
+                <Label x:Name="NumberCriteria" Text="Contains at least one number" TextColor="Red"/>
+                <Label x:Name="SpecialCharCriteria" Text="Contains at least one special character" TextColor="Red"/>
+                <Label x:Name="UpperCaseCriteria" Text="Contains at least one uppercase letter" TextColor="Red"/>
+            </VerticalStackLayout>
+        </VerticalStackLayout>-->
+        
+        <Label Text="Password" FontSize="Medium" Padding="5,10,0,0" />
+        <Frame x:Name="PwdEntryFrame" Style="{StaticResource FrameStyle}">
             <Entry Style="{StaticResource EntryStyle}" x:Name="PwdEntry" Placeholder="Enter password" MaxLength="12" IsPassword="True" TextChanged="OnPasswordTextChanged"/>
         </Frame>
-        <Frame x:Name="PwdConfirmEntryFrame" Style="{StaticResource FrameStyle}" Padding="5">
+        <Label x:Name="LengthCriteria" Text="At least 8 characters" TextColor="Red"/>
+        <Label x:Name="NumberCriteria" Text="Contains at least one number" TextColor="Red"/>
+        <Label x:Name="SpecialCharCriteria" Text="Contains at least one special character" TextColor="Red"/>
+        <Label x:Name="UpperCaseCriteria" Text="Contains at least one uppercase letter" TextColor="Red"/>
+
+        <Label Text="Confirm Password" FontSize="Medium" Padding="5,10,0,0" />
+        <Frame x:Name="PwdConfirmEntryFrame" Style="{StaticResource FrameStyle}">
             <Entry Style="{StaticResource EntryStyle}" x:Name="PwdConfirmEntry" Placeholder="Confirm password" MaxLength="12"  IsPassword="True" TextChanged="OnConfirmPwdTextChanged"/>
         </Frame>
 
         <Button x:Name="RegisterButton"
-            Text="Register"
+            Text="Sign Up"
             TextColor="Black"
             FontSize="16"
             BackgroundColor="#468fa2"
@@ -36,5 +69,27 @@
             Padding="20"
             Margin="20">
         </Button>
+
+        <ActivityIndicator x:Name="RegistrationInProgressIndicator" Style="{StaticResource LoadingIndicatorStyle}" />
+
+        <!--For now this should not be needed since I will be restricting account creation
+        to one account per device. In the future, this will definitely change-->
+        <!--<Label Text="Already have an account? Log in" FontSize="Small" HorizontalTextAlignment="Center" Padding="5,0,0,0" />
+        <Label HorizontalTextAlignment="Center" Padding="5,0,0,0" FontSize="Small">
+            <Label.FormattedText>
+                <FormattedString>
+                    --><!-- Static text part --><!--
+                    <Span Text="Already have an account? " />
+
+                    --><!-- Clickable "Log In" link --><!--
+                    <Span Text="Log in" TextColor="Blue" TextDecorations="Underline">
+                        <Span.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLoginTapped" />
+                        </Span.GestureRecognizers>
+                    </Span>
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>-->
+
     </VerticalStackLayout>
 </ContentPage>

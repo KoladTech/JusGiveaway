@@ -12,7 +12,7 @@
                 <Setter Property="PlaceholderColor" Value="#5C5C5C" />
                 <Setter Property="Placeholder" Value="Enter your name" />
                 <Setter Property="HeightRequest" Value="40" />
-                <Setter Property="Margin" Value="20,10" />
+                <Setter Property="Margin" Value="0,5,5,0" />
                 <Setter Property="HorizontalOptions" Value="FillAndExpand" />
             </Style>
 
@@ -37,12 +37,55 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-
+            
+            <!-- Custom Frame Style -->
             <Style x:Key="FrameStyle" TargetType="Frame">
-                <Setter Property="BackgroundColor" Value="#F0F0F0" />
-                <Setter Property="CornerRadius" Value="20" />
-                <Setter Property="Padding" Value="0" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="0,0,5,0" />
+                <Setter Property="BorderColor" Value="Transparent" />
             </Style>
+
+
+            <!-- Custom Stacklayout Style -->
+            <Style x:Key="CustomStackLayoutStyleForGameSelectionCard" TargetType="StackLayout">
+                <Setter Property="Spacing" Value="10" />
+                <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
+                <!-- Add any other common properties here -->
+            </Style>
+            
+            <Style x:Key="CustomFrameStyleForGameSelectionCard" TargetType="Frame">
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HasShadow" Value="True" />
+                <Setter Property="BackgroundColor" Value="MintCream"/>
+                <Setter Property="BorderColor" Value="#348C31"/>
+                <!-- Add any other common properties here -->
+            </Style>
+
+            <Style x:Key="GameSelectionCardFrameStyle" TargetType="Frame" BasedOn="{StaticResource CustomFrameStyleForGameSelectionCard}">
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <StackLayout Style="{StaticResource CustomStackLayoutStyleForGameSelectionCard}">
+                            <!-- Add any content you want within the StackLayout here -->
+                            <Image Source="kobo_front.png" Aspect="AspectFit" HeightRequest="80" />
+                            <Label Text="X n O" FontSize="20" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
+                        </StackLayout>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ActivityIndicator Style -->
+            <Style TargetType="ActivityIndicator" x:Key="LoadingIndicatorStyle">
+                <Setter Property="IsVisible" Value="False" />
+                <Setter Property="IsRunning" Value="False" />
+                <Setter Property="Color" Value="#008000" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

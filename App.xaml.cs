@@ -17,21 +17,21 @@ namespace JusGiveaway
 
             //Preferences.Remove("UserRegistered");
             //Preferences.Remove("UserSignedIn");
-            //Preferences.Remove("CodeExecuted");
+            //Preferences.Remove("SQLiteDBCreated");
 
 
-            //if (!Preferences.ContainsKey("UserSignedIn"))
+            //if (!preferences.containskey("usersignedin"))
             //{
-            //    // If not registered, navigate to the registration page
-            //    MainPage = new NavigationPage(new RegistrationPage());
+            //    // if not registered, navigate to the registration page
+            //    mainpage = new navigationpage(new registrationpage());
             //}
             //else
             //{
-            //    // If registered, navigate to the main page
-            //    MainPage = new NavigationPage(new MainPage());
+            //    // if registered, navigate to the main page
+            //    mainpage = new navigationpage(new mainpage());
             //}
 
-            //MainPage = new AppShell();
+            //mainpage = new appShell();
         }
 
         protected override Window CreateWindow(IActivationState activationState)
@@ -40,6 +40,7 @@ namespace JusGiveaway
             if (!Preferences.ContainsKey("UserRegistered"))
             {
                 return new Window(new NavigationPage(new RegistrationPage()));
+                //return new Window(new NavigationPage(new MainPage()));
             }
 
             // Set the next page to SignInPage
