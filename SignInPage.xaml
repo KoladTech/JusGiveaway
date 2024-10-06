@@ -8,7 +8,7 @@
         <FileImageSource File="mint_green_bckg.jpg" />
     </ContentPage.BackgroundImageSource>-->
     <VerticalStackLayout VerticalOptions="CenterAndExpand" Padding="20">
-        <Image Source="avatar_default.png" 
+        <Image Source="logo_green.png" 
             WidthRequest="50" 
             HeightRequest="50" 
             Aspect="AspectFill" 
@@ -16,7 +16,8 @@
             VerticalOptions="Start" 
             Margin="10"/>
 
-        <Label Text="Sign In" FontSize="26" FontAttributes="Bold" HorizontalOptions="Center" TextColor="#008000" Padding="10" />
+        <Label Text="Sign In" FontSize="26" FontAttributes="Bold" HorizontalOptions="Start" TextColor="#348C31" Padding="5,10,10,10" />
+        <Label Text="Enter your password..." FontSize="Micro" Padding="5,0,0,10" />
 
         <Label Text="Email" FontSize="Medium" Padding="5,10,0,0" />
         <Frame x:Name="SignInEmailEntryFrame" Style="{StaticResource FrameStyle}">

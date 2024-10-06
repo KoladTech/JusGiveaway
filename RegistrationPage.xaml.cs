@@ -224,6 +224,23 @@ public partial class RegistrationPage : ContentPage
     //    await Shell.Current.GoToAsync("//LoginPage");  // Example: Navigate to the login page
     //}
 
+    private void OnPasswordRevealButtonClicked(object sender, EventArgs e)
+    {
+        // Toggle password visibility
+        PwdEntry.IsPassword = !PwdEntry.IsPassword;
+
+        // Change the eye icon accordingly
+        PasswordRevealButton.Source = PwdEntry.IsPassword ? "eye_image_close.png" : "eye_image_open.png";
+    }
+
+    private void OnConfirmPasswordRevealButtonClicked(object sender, EventArgs e)
+    {
+        // Toggle password visibility
+        PwdConfirmEntry.IsPassword = !PwdConfirmEntry.IsPassword;
+
+        // Change the eye icon accordingly
+        ConfirmPasswordRevealButton.Source = PwdConfirmEntry.IsPassword ? "eye_image_close.png" : "eye_image_open.png";
+    }
 
     private bool enableRegisterButton(string password) {
 

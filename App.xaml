@@ -76,9 +76,20 @@
                 </Setter>
             </Style>
 
+            <!-- Define a style for Instructions Info Button -->
+            <Style x:Key="InstructionsInfoButtonStyle" TargetType="ImageButton">
+                <Setter Property="Source" Value="info_icon.png" />
+                <Setter Property="HeightRequest" Value="24" />
+                <Setter Property="WidthRequest" Value="24" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="VerticalOptions" Value="Start" />
+                <Setter Property="ZIndex" Value="1" />
+            </Style>
+
             <!-- ActivityIndicator Style -->
             <Style TargetType="ActivityIndicator" x:Key="LoadingIndicatorStyle">
-                <Setter Property="IsVisible" Value="False" />
+                <Setter Property="IsVisible" Value="True" />
                 <Setter Property="IsRunning" Value="False" />
                 <Setter Property="Color" Value="#008000" />
                 <Setter Property="HorizontalOptions" Value="Center" />

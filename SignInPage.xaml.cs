@@ -86,7 +86,6 @@ public partial class SignInPage : ContentPage
             // Navigate to the next page or perform any other action
             OnSignInCompleted(sender, e);
             Preferences.Set("UserSignedIn", true);
-
         }
         else
         {

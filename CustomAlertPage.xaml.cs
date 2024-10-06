@@ -1,4 +1,3 @@
-using Android.Content;
 
 namespace JusGiveaway;
 

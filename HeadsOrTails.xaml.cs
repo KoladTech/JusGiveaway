@@ -1,5 +1,6 @@
 using Firebase.Database;
 using Firebase.Database.Query;
+using static JusGiveaway.CustomAlertPage;
 
 namespace JusGiveaway;
 
@@ -14,10 +15,8 @@ public partial class HeadsOrTails : ContentPage
     private int score = 0;
     private int scoreAdjuster = 1; //helps with calculation of score
     private int currentWinnings = 0;
-    private int maxPossibleWinnings = 0;
+    private int maxPossibleWinnings = 0; //change this to be set to the lesser of db value or left over winnings
     private double totalGiveawayFunds = 0;
-    private const string coinFrontImage = "kobo_front.png";
-    private const string coinBackImage = "kobo_back.png";
 
     // Define a counter to keep track of the number of resets
     private int resetCounter = 0;
@@ -37,6 +36,8 @@ public partial class HeadsOrTails : ContentPage
         activeGame = dbHelper.GetRowWithMaxId();
         firebaseClient = FirebaseClientHelper.Instance.GetFirebaseClient();
         this.firebaseGiveawayData = firebaseGiveawayData;
+
+        maxPossibleWinnings = CommonFunctions.GetLeftoverGiveawayFunds(firebaseGiveawayData) < activeGame.MaxPossibleWinnings ? CommonFunctions.GetLeftoverGiveawayFunds(firebaseGiveawayData) : activeGame.MaxPossibleWinnings;
 
         //// Check if the code has been run before
         //if (!Preferences.ContainsKey("SQLiteDBCreated"))
@@ -77,7 +78,7 @@ public partial class HeadsOrTails : ContentPage
             headsCount = activeGame.HeadsCount;
             tailsCount = activeGame.TailsCount;
             totalFlips = headsCount + tailsCount;
-            maxPossibleWinnings = activeGame.MaxPossibleWinnings;
+            //maxPossibleWinnings = CommonFunctions.GetLeftoverGiveawayFunds(firebaseGiveawayData) < activeGame.MaxPossibleWinnings ? CommonFunctions.GetLeftoverGiveawayFunds(firebaseGiveawayData) : activeGame.MaxPossibleWinnings;
             currentWinnings = activeGame.CurrentWinnings;
             resetCounter = activeGame.TotalResetsUsed;
 
@@ -85,15 +86,17 @@ public partial class HeadsOrTails : ContentPage
             UpdateCounts();
 
             //since we already have a game saved, setup the game from where we left off
-            startGameUISetup(userData.Name, (isHeadsChosen ? "Heads" : "Tails"), maxPossibleWinnings, currentWinnings);
+            startGameUISetup(userData.Name, hasSelectedSides, (isHeadsChosen ? "Heads" : "Tails"), maxPossibleWinnings, currentWinnings);
 
             SaveDataToProperties();
         }
         else if (activeGame != null)
         {
             hasSelectedSides = false;
-            maxPossibleWinnings = activeGame.MaxPossibleWinnings;
+            //maxPossibleWinnings = int.Parse(firebaseGiveawayData["LeftoverGiveawayFunds"]) < activeGame.MaxPossibleWinnings ? int.Parse(firebaseGiveawayData["LeftoverGiveawayFunds"]) : activeGame.MaxPossibleWinnings;
             resetCounter = activeGame.TotalResetsUsed;
+
+            startGameUISetup(userData.Name, hasSelectedSides, null, maxPossibleWinnings, 0);
         }
 
         //TODO
@@ -133,7 +136,7 @@ public partial class HeadsOrTails : ContentPage
             Application.Current.Resources["SelectedSides"] = hasSelectedSides ? 1 : 0;
             Application.Current.Resources["HeadsCount"] = headsCount;
             Application.Current.Resources["TailsCount"] = tailsCount;
-            Application.Current.Resources["MaxPossibleWinnings"] = activeGame.MaxPossibleWinnings;
+            Application.Current.Resources["MaxPossibleWinnings"] = maxPossibleWinnings;
             Application.Current.Resources["CurrentWinnings"] = activeGame.CurrentWinnings;
             Application.Current.Resources["TotalResetsUsed"] = resetCounter;
         }
@@ -173,7 +176,7 @@ public partial class HeadsOrTails : ContentPage
             //uID = EncryptionHelper.Encrypt(playerPhoneNumber);
 
             hasSelectedSides = true;
-            startGameUISetup(userData.Name, choice, maxPossibleWinnings, 0);
+            startGameUISetup(userData.Name, hasSelectedSides, choice, maxPossibleWinnings, 0);
 
             SaveDataToProperties();
             GameData gameData = new()
@@ -206,7 +209,7 @@ public partial class HeadsOrTails : ContentPage
         for (int i = 0; i < 15; i++)
         {
             // Alternate between front and back images during rotation
-            CoinImage.Source = i % 2 == 0 ? coinFrontImage : coinBackImage;
+            CoinImage.Source = i % 2 == 0 ? CommonFunctions.coinFrontImage : CommonFunctions.coinBackImage;
 
             // Rotate the coin around the X-axis
             await CoinImage.RotateXTo(180, 100, Easing.SinInOut); // Rotate the coin around the X-axis by 180 degrees in 200 milliseconds
@@ -221,13 +224,13 @@ public partial class HeadsOrTails : ContentPage
         {
             //headsCount++;
             headsCount += 5;
-            CoinImage.Source = coinFrontImage;
+            CoinImage.Source = CommonFunctions.coinFrontImage;
         }
         else
         {
             //tailsCount++;
             tailsCount += 5;
-            CoinImage.Source = coinBackImage;
+            CoinImage.Source = CommonFunctions.coinBackImage;
         }
         //score = (headsCount - tailsCount) * scoreAdjuster;
 
@@ -289,12 +292,14 @@ public partial class HeadsOrTails : ContentPage
             if (isHeadsChosen && score >= 10)
             {
                 playerWon = true;
-                currentWinnings += 1000; // Increment score by 1000
+                //currentWinnings += 1000; // Increment score by 1000
+                currentWinnings += CommonFunctions.GetGameWinMonetaryValue(firebaseGiveawayData);
             }
             else if (!isHeadsChosen && score >= 10)
             {
                 playerWon = true;
-                currentWinnings += 1000; // Increment score by 1000
+                //currentWinnings += 1000; // Increment score by 1000
+                currentWinnings += CommonFunctions.GetGameWinMonetaryValue(firebaseGiveawayData);
             }
             else
             {
@@ -303,7 +308,8 @@ public partial class HeadsOrTails : ContentPage
                 if (currentWinnings > 0)
                 {
                     lossMsg = "You lost N1000!";
-                    currentWinnings -= 1000; // Deduct 1000 from score
+                    //currentWinnings -= 1000; // Deduct 1000 from score
+                    currentWinnings += CommonFunctions.GetGameLossMonetaryValue(firebaseGiveawayData);
                 }
             }
 
@@ -368,10 +374,11 @@ public partial class HeadsOrTails : ContentPage
             bool reset = await customAlertPage.WaitForUserResponseAsync();
 
             //bool reset = await DisplayAlert("Reset Game?", $"Your total maximum winnings will be reduced to N{1000 * (MaxResets-resetCounter-1)}!", "Yes", "No");
+            int totalResetsAllowed = CommonFunctions.GetTotalResetsAllowed(firebaseGiveawayData);
+
             if (reset)
             {
-                if (resetCounter < int.Parse(firebaseGiveawayData["TotalResetsAllowed"])
-)
+                if (resetCounter < totalResetsAllowed)
                 {
                     // Reduce totalPossibleWinnings by 1000
                     maxPossibleWinnings -= 1000;
@@ -385,7 +392,7 @@ public partial class HeadsOrTails : ContentPage
                     SaveDataToProperties();
                 }
             }
-            if (resetCounter == int.Parse(firebaseGiveawayData["TotalResetsAllowed"]) - 1)
+            if (resetCounter == totalResetsAllowed - 1)
             {
                 ResetButton.IsEnabled = false;
             }
@@ -460,18 +467,18 @@ public partial class HeadsOrTails : ContentPage
 
     }
 
-    private void startGameUISetup(string username, string choice, int maxPossibleWinning, int potentialWinning)
+    private void startGameUISetup(string username, bool selectedSides, string? choice, int maxPossibleWinning, int potentialWinning)
     {
         //Header.IsVisible = true;
         PlayerNameLabel.Text = username;
-        PlayerChoiceLabel.Text = choice;
+        PlayerChoiceLabel.Text = choice ?? "Heads/Tails";
         TotalPossibleWinningsLabel.Text = $"N{maxPossibleWinning}";
         PotentialWinningLabel.Text = $"N{potentialWinning}";
-        SelectionButton.IsVisible = false;
-        SideSelectionLayout.IsVisible = false;
-        CoinFlipLayout.IsVisible = true;
-        ResetButton.IsVisible = true;
-        InformationLayout.IsVisible = true;
+        SelectionButton.IsVisible = !selectedSides;
+        SideSelectionLayout.IsVisible = !selectedSides;
+        CoinFlipLayout.IsVisible = selectedSides;
+        ResetButton.IsVisible = selectedSides;
+        InformationLayout.IsVisible = selectedSides;
         //Titlelayout.IsVisible = true;
         //Titlelayout.Orientation = StackOrientation.Horizontal;
         TotalGiveawayFundsLabel.Text = $"N{totalGiveawayFunds}";
@@ -585,11 +592,10 @@ public partial class HeadsOrTails : ContentPage
 
     }
 
-    //private async void OnSponsoredByClicked()
-    //{
-    //    var customAlertPage = new CustomAlertPage($"This giveaway is sponsored by DavidBukola Foundation", $"{int.Parse(firebaseGiveawayData["NumberOfPlayers"])}");
-    //    var customAlertPage = new CustomAlertPage($"Sponsored by", "This giveaway is sponsored by DavidBukola Foundation", "Ok", "", true, false);
-    //    await Navigation.PushModalAsync(customAlertPage);
-    //    await customAlertPage.WaitForUserResponseAsync();
-    //}
+    private async void OnSponsoredByTapped(object sender, EventArgs e)
+    {
+        await CommonFunctions.DisplayCustomAlertPage(
+                "Sponsors", $"This giveaway is sponsored by .....{firebaseGiveawayData["Sponsor"]}",
+                "Close", "", true, false, AlertType.Info, Navigation);
+    }
 }

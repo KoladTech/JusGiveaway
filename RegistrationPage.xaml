@@ -8,15 +8,16 @@
         <FileImageSource File="mint_green_bckg.jpg" />
     </ContentPage.BackgroundImageSource>-->
     <VerticalStackLayout VerticalOptions="CenterAndExpand" Padding="20">
-        <Image Source="avatar_default.png" 
+        <Image Source="logo_green.png" 
             WidthRequest="50" 
             HeightRequest="50" 
             Aspect="AspectFill" 
             HorizontalOptions="Center" 
             VerticalOptions="Start" 
             Margin="10"/>
-        
-        <Label Text="Sign Up" FontSize="26" FontAttributes="Bold" TextColor="#008000" Padding="5,10,10,10" HorizontalOptions="CenterAndExpand" />
+
+        <Label Text="Sign Up" FontSize="26" FontAttributes="Bold" TextColor="#348C31" Padding="5,10,10,10" HorizontalOptions="Start" />
+        <Label Text="Enter your credentials to continue..." FontSize="Micro" Padding="5,0,0,10" />
 
         <Label Text="Username" FontSize="Medium" Padding="5,10,0,0" />
         <Frame x:Name="NameEntryFrame" Style="{StaticResource FrameStyle}">
@@ -41,19 +42,41 @@
                 <Label x:Name="UpperCaseCriteria" Text="Contains at least one uppercase letter" TextColor="Red"/>
             </VerticalStackLayout>
         </VerticalStackLayout>-->
-        
+
         <Label Text="Password" FontSize="Medium" Padding="5,10,0,0" />
         <Frame x:Name="PwdEntryFrame" Style="{StaticResource FrameStyle}">
-            <Entry Style="{StaticResource EntryStyle}" x:Name="PwdEntry" Placeholder="Enter password" MaxLength="12" IsPassword="True" TextChanged="OnPasswordTextChanged"/>
+            <Grid ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
+                <!--Password Entry-->
+                <Entry Style="{StaticResource EntryStyle}" x:Name="PwdEntry" Placeholder="Enter password" MaxLength="12" IsPassword="True" TextChanged="OnPasswordTextChanged"/>
+
+                <!--Password Reveal Button-->
+                <ImageButton x:Name="PasswordRevealButton" 
+                     Source="eye_image_close.png"
+                     Clicked="OnPasswordRevealButtonClicked"
+                     HeightRequest="30"
+                     WidthRequest="30"
+                     BackgroundColor="Transparent" 
+                     HorizontalOptions="End" />
+            </Grid>
         </Frame>
-        <Label x:Name="LengthCriteria" Text="At least 8 characters" TextColor="Red"/>
-        <Label x:Name="NumberCriteria" Text="Contains at least one number" TextColor="Red"/>
-        <Label x:Name="SpecialCharCriteria" Text="Contains at least one special character" TextColor="Red"/>
-        <Label x:Name="UpperCaseCriteria" Text="Contains at least one uppercase letter" TextColor="Red"/>
+        <Label x:Name="LengthCriteria" Text="At least 8 characters" TextColor="Red" FontSize="Small"/>
+        <Label x:Name="NumberCriteria" Text="Contains at least one number" TextColor="Red" FontSize="Small"/>
+        <Label x:Name="SpecialCharCriteria" Text="Contains at least one special character" TextColor="Red" FontSize="Small"/>
+        <Label x:Name="UpperCaseCriteria" Text="Contains at least one uppercase letter" TextColor="Red" FontSize="Small"/>
 
         <Label Text="Confirm Password" FontSize="Medium" Padding="5,10,0,0" />
         <Frame x:Name="PwdConfirmEntryFrame" Style="{StaticResource FrameStyle}">
-            <Entry Style="{StaticResource EntryStyle}" x:Name="PwdConfirmEntry" Placeholder="Confirm password" MaxLength="12"  IsPassword="True" TextChanged="OnConfirmPwdTextChanged"/>
+            <Grid ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
+                <Entry Style="{StaticResource EntryStyle}" x:Name="PwdConfirmEntry" Placeholder="Confirm password" MaxLength="12"  IsPassword="True" TextChanged="OnConfirmPwdTextChanged"/>
+
+                <ImageButton x:Name="ConfirmPasswordRevealButton" 
+                     Source="eye_image_close.png"
+                     Clicked="OnConfirmPasswordRevealButtonClicked"
+                     HeightRequest="30"
+                     WidthRequest="30"
+                     BackgroundColor="Transparent" 
+                     HorizontalOptions="End" />
+            </Grid>
         </Frame>
 
         <Button x:Name="RegisterButton"

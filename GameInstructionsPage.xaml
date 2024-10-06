@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="JusGiveaway.GameInstructionsPage"
+             Title="GameInstructionsPage"
+             BackgroundColor="Transparent">
+    <!-- Content of instructions page -->
+    <!--<ContentView BackgroundColor="Transparent" Padding="20" VerticalOptions="Center">
+        <Frame CornerRadius="10" BackgroundColor="White" Padding="20">
+            <StackLayout>
+                <Label Text="{Binding GameInstructionsTitle}" FontSize="20" FontAttributes="Bold" 
+                       HorizontalOptions="Center" Margin="0,0,0,10"/>
+                <Label Text="{Binding GameInstructions}" FontSize="16" HorizontalOptions="Center" Margin="0,0,0,20"/>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
+                    <Button Text="Close" Clicked="OnCloseClicked" 
+                            BackgroundColor="Green" FontSize="16" 
+                            HorizontalOptions="FillAndExpand" />
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+    </ContentView>-->
+    <ContentView BackgroundColor="Transparent" Padding="20" VerticalOptions="Center" HorizontalOptions="Center">
+        <!-- Container Frame for the Pop-up -->
+        <Frame CornerRadius="10" 
+           BackgroundColor="White" 
+           Padding="20"
+           BorderColor="LightGray" 
+           HasShadow="True"
+           HorizontalOptions="Center"
+           VerticalOptions="Center"
+           WidthRequest="300" 
+           HeightRequest="600"
+           IsClippedToBounds="True">
+
+            <!-- Grid Layout with Three Rows -->
+            <Grid RowSpacing="10">
+
+                <!-- Row Definitions: Three rows for Header, Scrollable Content, and Footer -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Header Row: Adjusts to content size -->
+                    <RowDefinition Height="*"/>
+                    <!-- Scrollable Content Row: Takes remaining space -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Footer Row: Adjusts to content size -->
+                </Grid.RowDefinitions>
+
+                <!-- Header Section: Title -->
+                <Label Grid.Row="0" Text="{Binding GameInstructionsTitle}" 
+                   FontSize="20" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center" 
+                   TextColor="Black"
+                   Margin="0,0,0,10" />
+
+                <!-- Scrollable Content Section: Instructions -->
+                <ScrollView Grid.Row="1" VerticalOptions="FillAndExpand">
+                    <Frame CornerRadius="10" Padding="0" HasShadow="True" BackgroundColor="#F5F5F5">
+                        <StackLayout Spacing="20">
+
+                            <!-- Section 1: How to Play -->
+                            <Label Text="How to Play" 
+                           FontSize="20" 
+                           FontAttributes="Bold" 
+                           TextColor="Black" 
+                           HorizontalOptions="Center" />
+
+                            <Label FontSize="16" TextColor="Gray" HorizontalOptions="Fill">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <!-- Section 1 Content -->
+                                        <Span Text="Choose a side - " />
+                                        <Span Text="Heads or Tails " FontAttributes="Bold"/>
+                                        <Span Text="and start the game. Flip the coin, and if it lands on your side, you win. 
+                                          Each round of HoT consists of 100 coin flips. You need to get more flips on your chosen side to win. "/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <!-- Section 2: How to Win or Lose Money -->
+                            <Label Text="How to Win/Lose Money" 
+                           FontSize="20" 
+                           FontAttributes="Bold" 
+                           TextColor="Black" 
+                           HorizontalOptions="Center" />
+
+                            <Label FontSize="16" TextColor="Gray" HorizontalOptions="Fill">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <!-- Section 2 Content -->
+                                        <Span Text="Each round of HoT you win comes with monetary wins. " />
+                                        <Span Text="10 or more positive points, gain of N2,000. 1-9 positive flips gain of N500. " FontAttributes="Bold"/>
+                                        <Span Text="Rounds you lose will cost you winnings. "/>
+                                        <Span Text="10 or more negative flips loss of N1,000. 1-9 negative flips loss of N500. " FontAttributes="Bold"/>
+                                        <Span Text="Every round you "/>
+                                        <Span Text="draw (BINGO) " FontAttributes="Bold"/>
+                                        <Span Text="comes with a "/>
+                                        <Span Text="N5,000 " FontAttributes="Bold"/>
+                                        <Span Text="win. Maximum possible winnings is "/>
+                                        <Span Text="N50,000 " FontAttributes="Bold"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <!-- Section 3: How to Reset Game -->
+                            <Label Text="How to Reset Game" 
+                               FontSize="20" 
+                               FontAttributes="Bold" 
+                               TextColor="Black" 
+                               HorizontalOptions="Center" />
+
+                            <Label FontSize="16" TextColor="Gray" HorizontalOptions="Fill">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <!-- Section 3 Content -->
+                                        <Span Text="Changing your side selection means you wish to reset the game, click "/>
+                                        <Span Text="‘Reset Game’. " FontAttributes="Bold"/>
+                                        <Span Text="This will reset your score and progress. Each reset will also reduce your maximum winning by "/>
+                                        <Span Text="N2,500. " FontAttributes="Bold"/>
+                                        <Span Text="You have only "/>
+                                        <Span Text="20 resets " FontAttributes="Bold"/>
+                                        <Span Text="allowed"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <!-- Section 4: How to Cashout -->
+                            <Label Text="How to Cashout" 
+                            FontSize="20" 
+                            FontAttributes="Bold" 
+                            TextColor="Black" 
+                            HorizontalOptions="Center" />
+
+                            <Label FontSize="16" TextColor="Gray" HorizontalOptions="Fill">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <!-- Section 4 Content -->
+                                        <Span Text="Cashout your winnings " />
+                                        <Span Text="ONLY " FontAttributes="Bold"/>
+                                        <Span Text="at the end of a round. Minimum cashout is " />
+                                        <Span Text="N20,000. " FontAttributes="Bold"/>
+                                        <Span Text="Fill the form to complete cashout. Once you cashout, it's Gameover! Until the next giveaway. " />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <!-- Section 5: Global Funds Info -->
+                            <Label Text="Global Funds" 
+                            FontSize="20" 
+                            FontAttributes="Bold" 
+                            TextColor="Black" 
+                            HorizontalOptions="Center" />
+
+                            <Label FontSize="16" TextColor="Gray" HorizontalOptions="Fill">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <!-- Section 5 Content -->
+                                        <Span Text="This indicates the remaining funds available in the current giveaway. It " />
+                                        <Span Text="DOES NOT " FontAttributes="Bold"/>
+                                        <Span Text="indicate the funds you are able to win! " />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <!-- Section 5: More Info -->
+                            <Label Text="More info/instructions" 
+                            FontSize="20" 
+                            FontAttributes="Bold" 
+                            TextColor="Black" 
+                            HorizontalOptions="Center" />
+
+                            <Label FontSize="16" TextColor="Gray" HorizontalOptions="Fill">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <!-- Section 5 Content -->
+                                        <Span Text="For more detailed instructions on how to play Head or Tails (HoT). Please visit our " />
+                                        <Span Text="instagram page." TextDecorations="Underline" TextColor="Blue">
+                                            <!-- Tap Gesture Recognizer for Link -->
+                                            <Span.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding OpenLinkCommand}" CommandParameter="https://www.instagram.com/davidbukola_foundation/" />
+                                            </Span.GestureRecognizers>
+                                        </Span>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                        </StackLayout>
+                    </Frame>
+                </ScrollView>
+
+                <!-- Footer Section: Button -->
+                <StackLayout Grid.Row="2" Orientation="Horizontal" 
+                         HorizontalOptions="Center" 
+                         Spacing="20">
+                    <Button Text="Close" 
+                        Clicked="OnCloseClicked" 
+                        BackgroundColor="Green" 
+                        TextColor="White"
+                        FontSize="16" 
+                        HorizontalOptions="Center" 
+                        VerticalOptions="End" 
+                        WidthRequest="100"/>
+                </StackLayout>
+            </Grid>
+        </Frame>
+    </ContentView>
+</ContentPage>

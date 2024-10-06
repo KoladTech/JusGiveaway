@@ -1,5 +1,6 @@
 ﻿using Firebase.Auth;
 using Firebase.Database;
+using Microsoft.Maui.Controls;
 using static JusGiveaway.CustomAlertPage;
 
 namespace JusGiveaway;
@@ -23,6 +24,7 @@ public partial class MainPage : ContentPage
 
     private async void OnHeadsOrTailsGameButtonClicked(object sender, EventArgs e)
     {
+        CommonFunctions.ToggleActivityIndicator(MainPageProgressIndicator, (Button)sender);
         await CommonFunctions.AnimateButton((Button)sender);
         Dictionary<string,string>? firebaseGiveawayData = null;
 
@@ -41,7 +43,9 @@ public partial class MainPage : ContentPage
         if (firebaseGiveawayData != null)
         {
             await Navigation.PushAsync(new HeadsOrTails(firebaseGiveawayData));
+            //await Navigation.PushAsync(new CountdownPage(firebaseGiveawayData));
         }
+        CommonFunctions.ToggleActivityIndicator(MainPageProgressIndicator, (Button)sender);
     }
 
     private async void ImageButton_Clicked(object sender, EventArgs e)
@@ -57,6 +61,18 @@ public partial class MainPage : ContentPage
         //var firebaseGiveawayData = await CommonFunctions.GetGameDataFromFirebaseAsync(firebaseClient);
 
         //await Navigation.PushAsync(new HeadsOrTails(firebaseGiveawayData));
+    }
+
+    private async void InstructionsHeadsOrTailsInfoIcon_Clicked(object sender, EventArgs e)
+    {
+        var customAlertPage = new GameInstructionsPage("Heads or Tails (HoT)","");
+        await Navigation.PushModalAsync(customAlertPage);
+    }
+
+    private async void InstructionsComingSoonInfoIcon_Clicked(object sender, EventArgs e)
+    {
+        var customAlertPage = new CustomAlertPage("Coming Soon", "More games will be available soon!","Close","",true,false,AlertType.Info);
+        await Navigation.PushModalAsync(customAlertPage);
     }
 
 }

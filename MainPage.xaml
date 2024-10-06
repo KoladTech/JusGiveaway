@@ -25,7 +25,7 @@
             <!-- First row content -->
             <!-- Stack for image and left-aligned content -->
             <StackLayout Grid.Row="0" VerticalOptions="Start" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                <Image Source="avatar_default.png" 
+                <Image Source="avatar_green.png" 
                     WidthRequest="50" 
                     HeightRequest="50" 
                     Aspect="AspectFill" 
@@ -71,6 +71,7 @@
             <!-- First row, first column -->
             <Frame Grid.Row="0" Grid.Column="0" Style="{StaticResource CustomFrameStyleForGameSelectionCard}">
                 <StackLayout>
+                    <ImageButton Style="{StaticResource InstructionsInfoButtonStyle}" Clicked="InstructionsHeadsOrTailsInfoIcon_Clicked" />
                     <Image Source="kobo_front.png" Aspect="AspectFit" HeightRequest="80" />
                     <Label Text="Heads Or Tails" FontSize="20" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
                     <Button Text="Play" Clicked="OnHeadsOrTailsGameButtonClicked" HorizontalOptions="FillAndExpand" Margin="0,20,0,0"
@@ -82,7 +83,8 @@
             <!--Password-->
             <Frame Grid.Row="0" Grid.Column="1" Style="{StaticResource CustomFrameStyleForGameSelectionCard}">
                 <StackLayout>
-                    <Image Source="dotnet_bot.png" Aspect="AspectFit" HeightRequest="80" />
+                    <ImageButton Style="{StaticResource InstructionsInfoButtonStyle}" Clicked="InstructionsComingSoonInfoIcon_Clicked" />
+                    <Image Source="question_mark.png" Aspect="AspectFit" HeightRequest="80" />
                     <Label Text="Coming Soon" FontSize="20" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
                     <Button Text="Play" Clicked="ImageButton_Clicked" HorizontalOptions="FillAndExpand" Margin="0,20,0,0"
                             BackgroundColor="#348C31" FontSize="16" IsEnabled="False" />
@@ -93,7 +95,8 @@
             <!--RockPaperScissors-->
             <Frame Grid.Row="1" Grid.Column="0" Style="{StaticResource CustomFrameStyleForGameSelectionCard}">
                 <StackLayout>
-                    <Image Source="smile_emoji.png" Aspect="AspectFit" HeightRequest="80" />
+                    <ImageButton Style="{StaticResource InstructionsInfoButtonStyle}" Clicked="InstructionsComingSoonInfoIcon_Clicked" />
+                    <Image Source="question_mark.png" Aspect="AspectFit" HeightRequest="80" />
                     <Label Text="Coming Soon" FontSize="20" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
                     <Button Text="Play" Clicked="ImageButton_Clicked" HorizontalOptions="FillAndExpand" Margin="0,20,0,0"
                             BackgroundColor="#348C31" FontSize="16" IsEnabled="False" />
@@ -104,12 +107,15 @@
             <!--X n O-->
             <Frame Grid.Row="1" Grid.Column="1" Style="{StaticResource CustomFrameStyleForGameSelectionCard}">
                 <StackLayout>
-                    <Image Source="avatar_default.png" Aspect="AspectFit" HeightRequest="80" />
+                    <ImageButton Style="{StaticResource InstructionsInfoButtonStyle}" Clicked="InstructionsComingSoonInfoIcon_Clicked" />
+                    <Image Source="question_mark.png" Aspect="AspectFit" HeightRequest="80" />
                     <Label Text="Coming Soon" FontSize="20" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
                     <Button Text="Play" Clicked="ImageButton_Clicked" HorizontalOptions="FillAndExpand" Margin="0,20,0,0"
                             BackgroundColor="#348C31" FontSize="16" IsEnabled="False" />
                 </StackLayout>
             </Frame>
         </Grid>
+
+        <ActivityIndicator x:Name="MainPageProgressIndicator" Style="{StaticResource LoadingIndicatorStyle}" />
     </VerticalStackLayout>
 </ContentPage>

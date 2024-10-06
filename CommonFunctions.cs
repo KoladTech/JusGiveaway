@@ -10,6 +10,9 @@ namespace JusGiveaway
 {
     public static class CommonFunctions
     {
+        public const string coinFrontImage = "kobo_front.png";
+        public const string coinBackImage = "kobo_back.png";
+
         public static async Task AnimateButton(Button button)
         {
             await button.ScaleTo(1.15, 100);
@@ -53,8 +56,27 @@ namespace JusGiveaway
         public static void ToggleActivityIndicator(ActivityIndicator activityIndicator, Button buttonClicked)
         {
             buttonClicked.IsEnabled = !buttonClicked.IsEnabled;
-            activityIndicator.IsVisible = !activityIndicator.IsVisible;
+            //activityIndicator.IsVisible = !activityIndicator.IsVisible;
             activityIndicator.IsRunning = !activityIndicator.IsRunning;
+        }
+
+        public static int GetGameWinMonetaryValue(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["GameWinMonetaryValue"]);
+        }
+        public static int GetGameLossMonetaryValue(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["GameLossMonetaryValue"]);
+        }
+
+        public static int GetLeftoverGiveawayFunds(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["LeftoverGiveawayFunds"]);
+        }
+
+        public static int GetTotalResetsAllowed(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["TotalResetsAllowed"]);
         }
     }
 
