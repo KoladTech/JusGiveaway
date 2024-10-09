@@ -2,16 +2,46 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="JusGiveaway.CountdownPage"
-             Title="CountdownPage">
+             Title="CountdownPage"
+             NavigationPage.HasNavigationBar="False">
     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
 
+        <Image Source="logo_green.png" 
+            WidthRequest="100" 
+            HeightRequest="100" 
+            Aspect="AspectFill" 
+            HorizontalOptions="Center" 
+            VerticalOptions="Start" 
+            Margin="10"/>
+        
          <!--Countdown Timer--> 
-        <Label x:Name="CountdownLabel" 
-               FontSize="Medium" 
-               HorizontalTextAlignment="Center" 
-               VerticalTextAlignment="Center" 
-               TextColor="Black"
-               Text="00d: 00h: 00m: 00s"/>
+        <Frame CornerRadius="20"
+           BackgroundColor="#F0F8FF"
+           Padding="10"
+           BorderColor="#D3D3D3"
+           HasShadow="True"
+           Margin="10"
+           HorizontalOptions="Center">
+            <StackLayout Orientation="Vertical">
+                <StackLayout Orientation="Vertical" Padding="5">
+                    <Label x:Name="DaysLabel" Text="00" FontSize="Large" FontAttributes="Bold" TextColor="#1E90FF" HorizontalOptions="Center"/>
+                    <Label Text="Days" FontSize="Small" TextColor="Gray" HorizontalOptions="Center"/>
+                </StackLayout>
+                <StackLayout Orientation="Vertical" Padding="5">
+                    <Label x:Name="HoursLabel" Text="00" FontSize="Large" FontAttributes="Bold" TextColor="#32CD32" HorizontalOptions="Center"/>
+                    <Label Text="Hours" FontSize="Small" TextColor="Gray" HorizontalOptions="Center"/>
+                </StackLayout>
+                <StackLayout Orientation="Vertical" Padding="5">
+                    <Label x:Name="MinutesLabel" Text="00" FontSize="Large" FontAttributes="Bold" TextColor="#FFA500" HorizontalOptions="Center"/>
+                    <Label Text="Minutes" FontSize="Small" TextColor="Gray" HorizontalOptions="Center"/>
+                </StackLayout>
+                <StackLayout Orientation="Vertical" Padding="5">
+                    <Label x:Name="SecondsLabel" Text="00" FontSize="Large" FontAttributes="Bold" TextColor="#FF6347" HorizontalOptions="Center"/>
+                    <Label Text="Seconds" FontSize="Small" TextColor="Gray" HorizontalOptions="Center"/>
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+
 
     </VerticalStackLayout>
 </ContentPage>

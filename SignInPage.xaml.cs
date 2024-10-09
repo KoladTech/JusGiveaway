@@ -31,6 +31,10 @@ public partial class SignInPage : ContentPage
         SignInEmailEntry.Text = userData[0].EmailAddress;
         user = null;
         firebaseClient = FirebaseClientHelper.Instance.GetFirebaseClient();
+
+        // Attach event handlers for each Entry control in the form
+        SignInEmailEntry.Focused += OnEntryFocused;
+        SignInPwdEntry.Focused += OnEntryFocused;
     }
 
     private async void OnSignInCompleted(object sender, EventArgs e)
@@ -56,6 +60,8 @@ public partial class SignInPage : ContentPage
         //List<GameData> game = dbHelper.GetGameData();
         // Navigate to MainPage after sign in
         await Navigation.PushAsync(new MainPage());
+
+        CommonFunctions.RemovePagesFromNavigationStack(Navigation);
     }
 
     private async void OnSignInClicked(object sender, EventArgs e)
@@ -122,5 +128,16 @@ public partial class SignInPage : ContentPage
         if (SignInPwdEntry.Text is null || SignInPwdEntry.Text == "")
             return false;
         return true;
+    }
+
+    // Method to handle the focus event and scroll the view
+    private void OnEntryFocused(object sender, FocusEventArgs e)
+    {
+        var entry = sender as Entry;
+        if (entry != null)
+        {
+            // Add some padding to bring whole form into view
+            SignInPageVerticalStackLayout.Padding = new Thickness(20, 20, 20, 350);
+        }
     }
 }

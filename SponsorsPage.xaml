@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="JusGiveaway.SponsorsPage"
+             Title="SponsorsPage"
+             BackgroundColor="#80000000">
+    <!-- Content of your modal alert -->
+    <ContentView BackgroundColor="Transparent" Padding="20" VerticalOptions="Center">
+        <Frame CornerRadius="10" BackgroundColor="White" Padding="20" HasShadow="True" BorderColor="Green" >
+            <StackLayout>
+                <Label Text="Sponsors" FontSize="20" HorizontalOptions="Center" Margin="0,0,0,10" FontAttributes="Bold"/>
+                <Label Text="This giveaway is sponsored by " FontSize="16" HorizontalOptions="Center" Margin="0,0,0,10" />
+
+                <StackLayout VerticalOptions="Start" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                    <Image Source="avatar_green.png" 
+                        WidthRequest="50" 
+                        HeightRequest="50" 
+                        Aspect="AspectFill" 
+                        HorizontalOptions="Start" 
+                        VerticalOptions="Start" 
+                        Margin="0,0,2,0"/>
+
+                    <StackLayout VerticalOptions="Start" HorizontalOptions="Start" Margin="0,2,0,0">
+                        <Label Text="Instagram Link Goes Here " FontSize="16" HorizontalOptions="Start" VerticalOptions="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span x:Name="SponsorInstagramLabel" Text="instagram_page." TextDecorations="Underline" TextColor="Blue">
+                                        <!-- Tap Gesture Recognizer for Link -->
+                                        <Span.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding OpenSponsorInstagramCommand}" CommandParameter="https://www.instagram.com/" />
+                                        </Span.GestureRecognizers>
+                                    </Span>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </StackLayout>
+
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20" VerticalOptions="End">
+                    <Button Text="Close" Clicked="OnCloseClicked" 
+                            FontSize="16" HorizontalOptions="FillAndExpand" 
+                            VerticalOptions="End" BackgroundColor="Green" />
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+    </ContentView>
+</ContentPage>

@@ -1,6 +1,7 @@
 using Firebase.Database;
 using System;
 using System.Threading.Tasks;
+using static JusGiveaway.CustomAlertPage;
 
 namespace JusGiveaway;
 
@@ -10,7 +11,7 @@ public partial class CountdownPage : ContentPage
     private readonly SQLiteDBHelper dbHelper;
     private readonly List<UserData> userData;
     private readonly FirebaseClient firebaseClient;
-    private DateTime _targetDate;
+    private DateTime giveawayStartDate;
     private bool _isCountdownRunning;
     public CountdownPage(Dictionary<string, string> firebaseGiveawayData)
 	{
@@ -20,45 +21,40 @@ public partial class CountdownPage : ContentPage
         userData = dbHelper.GetUserData();
         firebaseClient = FirebaseClientHelper.Instance.GetFirebaseClient();
 
-        StartCountdown(new DateTime(2024, 9, 20, 22, 45, 0),firebaseGiveawayData); // Set your target date here
+        StartCountdown(firebaseGiveawayData);
     }
 
-    private void StartCountdown(DateTime targetDate, Dictionary<string, string> firebaseGiveawayData)
+    private async void StartCountdown(Dictionary<string, string> firebaseGiveawayData)
     {
-        _targetDate = targetDate;
+        GetGiveawayStartDate(firebaseGiveawayData);
         _isCountdownRunning = true;
 
-        //BindableObject.Dispatcher.StartTimer
-
-        // Use Dispatcher to update UI on the main thread
-        Device.StartTimer(TimeSpan.FromSeconds(1), () =>
+        while (_isCountdownRunning)
         {
-            if (_isCountdownRunning)
-            {
-                TimeSpan remainingTime = _targetDate - DateTime.Now;
+            TimeSpan remainingTime = giveawayStartDate - DateTime.Now;
 
-                if (remainingTime.TotalSeconds <= 0)
-                {
-                    //Countdown is complete, navigate to another page
-                    _isCountdownRunning = false;
-                    CountdownLabel.Text = "00d: 00h: 00m: 00s";
-                    OnCountdownCompleted(firebaseGiveawayData);
-                    return false; // Stops the timer
-                }
-                else
-                {
-                    //Update countdown label with remaining time
-                    CountdownLabel.Text = string.Format(
-                        "{0}d: {1}h: {2}m: {3}s",
-                        remainingTime.Days,
-                        remainingTime.Hours,
-                        remainingTime.Minutes,
-                        remainingTime.Seconds
-                    );
-                }
+            if (remainingTime.TotalSeconds <= 0)
+            {
+                // Countdown is complete, navigate to another page
+                _isCountdownRunning = false;
+                DaysLabel.Text = "00";
+                HoursLabel.Text = "00";
+                MinutesLabel.Text = "00";
+                SecondsLabel.Text = "00";
+                OnCountdownCompleted(firebaseGiveawayData);
+                break; // Exit the loop
             }
-            return true; // Continue the timer until stopped
-        });
+            else
+            {
+                // Update the label text based on the remaining time
+                DaysLabel.Text = remainingTime.Days.ToString("D2");    // Display as 2-digit
+                HoursLabel.Text = remainingTime.Hours.ToString("D2");
+                MinutesLabel.Text = remainingTime.Minutes.ToString("D2");
+                SecondsLabel.Text = remainingTime.Seconds.ToString("D2");
+            }
+
+            await Task.Delay(1000); // Wait for 1 second before updating again
+        }
     }
 
     private async void OnCountdownCompleted(Dictionary<string, string> firebaseGiveawayData)
@@ -66,6 +62,21 @@ public partial class CountdownPage : ContentPage
         // Perform navigation to another page (replace with your target page)
         await Task.Delay(1000); // Optionally delay before navigating
         await Navigation.PushAsync(new HeadsOrTails(firebaseGiveawayData));
+
+    }
+
+    private async void GetGiveawayStartDate(Dictionary<string, string> firebaseGiveawayData)
+    {
+        string dateString = firebaseGiveawayData["StartDate"];
+
+        if (DateTime.TryParseExact(dateString, "yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out giveawayStartDate))
+        {
+            Console.WriteLine(giveawayStartDate); // Successfully parsed: 10/08/2024 00:00:00
+        }
+        else
+        {
+            await CommonFunctions.DisplayCustomAlertPage("Error", "Invalid starting date format retrieved from database", "Close", "", true, false, AlertType.Error, Navigation);
+        }
 
     }
 }

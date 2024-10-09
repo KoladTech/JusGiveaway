@@ -65,7 +65,8 @@ namespace JusGiveaway
 
         protected override void OnResume()
         {
-            // Handle when your app resumes
+            // Save progress in the SQLite database
+            SaveProgressToDatabase();
         }
 
         private void SaveProgressToDatabase()
@@ -75,11 +76,15 @@ namespace JusGiveaway
             if (Application.Current != null)
             {
                 GameData currentGameState = dbHelper.GetRowWithMaxId();
-                currentGameState.HeadsCount = (int)Current.Resources["HeadsCount"];
-                currentGameState.TailsCount = (int)Current.Resources["TailsCount"];
-                currentGameState.CurrentWinnings = (int)Current.Resources["CurrentWinnings"];
 
-                dbHelper.UpdateItem(currentGameState);
+                if (currentGameState != null && currentGameState.SelectedSides == 1)
+                {
+                    currentGameState.HeadsCount = (int)Current.Resources["HeadsCount"];
+                    currentGameState.TailsCount = (int)Current.Resources["TailsCount"];
+                    currentGameState.CurrentWinnings = (int)Current.Resources["CurrentWinnings"];
+
+                    dbHelper.UpdateItem(currentGameState);
+                }
             }
         }
         private bool CheckRegistrationStatus()

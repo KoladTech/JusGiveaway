@@ -95,7 +95,15 @@
                 <Setter Property="HorizontalOptions" Value="Center" />
                 <Setter Property="VerticalOptions" Value="Center" />
             </Style>
-
+            
+            <!-- ControlTemplate for the footer content for registration and sign in pages -->
+            <ControlTemplate x:Key="FooterTemplate">
+                <StackLayout VerticalOptions="EndAndExpand" Padding="10,20">
+                    <Label Text="© 2024 JusGiveaway. All rights reserved." FontSize="Small" HorizontalOptions="Center" Padding="0,0,0,5" />
+                    <Label Text="DavidBukola Foundation" FontSize="Small" HorizontalOptions="Center" />
+                    <Label Text="Where care meets community" FontSize="Micro" HorizontalOptions="Center" />
+                </StackLayout>
+            </ControlTemplate>
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />

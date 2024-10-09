@@ -4,11 +4,11 @@
              x:Class="JusGiveaway.RegistrationPage"
              Title="RegistrationPage"
              NavigationPage.HasNavigationBar="False">
-    <!--<ContentPage.BackgroundImageSource>
-        <FileImageSource File="mint_green_bckg.jpg" />
-    </ContentPage.BackgroundImageSource>-->
-    <VerticalStackLayout VerticalOptions="CenterAndExpand" Padding="20">
-        <Image Source="logo_green.png" 
+
+    <!-- ScrollView to handle keyboard overlap -->
+    <ScrollView VerticalOptions="FillAndExpand">
+        <VerticalStackLayout x:Name="RegistrationPageVerticalStackLayout" VerticalOptions="StartAndExpand"  Padding="20">
+            <Image Source="logo_green.png" 
             WidthRequest="50" 
             HeightRequest="50" 
             Aspect="AspectFill" 
@@ -16,70 +16,58 @@
             VerticalOptions="Start" 
             Margin="10"/>
 
-        <Label Text="Sign Up" FontSize="26" FontAttributes="Bold" TextColor="#348C31" Padding="5,10,10,10" HorizontalOptions="Start" />
-        <Label Text="Enter your credentials to continue..." FontSize="Micro" Padding="5,0,0,10" />
+            <Label Text="Sign Up" FontSize="26" FontAttributes="Bold" TextColor="#348C31" Padding="5,10,10,10" HorizontalOptions="Start" />
+            <Label Text="Enter your credentials to continue..." FontSize="Micro" Padding="5,0,0,10" />
 
-        <Label Text="Username" FontSize="Medium" Padding="5,10,0,0" />
-        <Frame x:Name="NameEntryFrame" Style="{StaticResource FrameStyle}">
-            <Entry Style="{StaticResource EntryStyle}" x:Name="NameEntry" Placeholder="Enter your username" MaxLength="10" TextChanged="OnUserNameTextChanged"/>
-        </Frame>
+            <Label Text="Username" FontSize="Medium" Padding="5,10,0,0" />
+            <Frame x:Name="NameEntryFrame" Style="{StaticResource FrameStyle}">
+                <Entry Style="{StaticResource EntryStyle}" x:Name="NameEntry" Placeholder="Enter your username" MaxLength="10" TextChanged="OnUserNameTextChanged"/>
+            </Frame>
 
-        <Label Text="Email" FontSize="Medium" Padding="5,10,0,0" />
-        <Frame x:Name="EmailEntryFrame" Style="{StaticResource FrameStyle}">
-            <Entry Style="{StaticResource EntryStyle}" x:Name="EmailEntry" Placeholder="Enter email" Keyboard="Email" TextChanged="OnEmailTextChanged"/>
-        </Frame>
+            <Label Text="Email" FontSize="Medium" Padding="5,10,0,0" />
+            <Frame x:Name="EmailEntryFrame" Style="{StaticResource FrameStyle}">
+                <Entry Style="{StaticResource EntryStyle}" x:Name="EmailEntry" Placeholder="Enter email" Keyboard="Email" TextChanged="OnEmailTextChanged"/>
+            </Frame>
 
-        <!--<VerticalStackLayout Padding="10">
-            <Entry Style="{StaticResource EntryStyle}" x:Name="PwdEntryss" 
-           Placeholder="Enter password" MaxLength="12" 
-           IsPassword="True" TextChanged="OnPasswordTextChanged"/>
+            <Label Text="Password" FontSize="Medium" Padding="5,10,0,0" />
+            <Frame x:Name="PwdEntryFrame" Style="{StaticResource FrameStyle}">
+                <Grid ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
+                    <!--Password Entry-->
+                    <Entry Style="{StaticResource EntryStyle}" x:Name="PwdEntry" Placeholder="Enter password" MaxLength="12" IsPassword="True" TextChanged="OnPasswordTextChanged"/>
 
-            --><!-- List of password criteria --><!--
-            <VerticalStackLayout x:Name="PasswordCriteriaLayout">
-                <Label x:Name="LengthCriteria" Text="At least 8 characters" TextColor="Red"/>
-                <Label x:Name="NumberCriteria" Text="Contains at least one number" TextColor="Red"/>
-                <Label x:Name="SpecialCharCriteria" Text="Contains at least one special character" TextColor="Red"/>
-                <Label x:Name="UpperCaseCriteria" Text="Contains at least one uppercase letter" TextColor="Red"/>
-            </VerticalStackLayout>
-        </VerticalStackLayout>-->
-
-        <Label Text="Password" FontSize="Medium" Padding="5,10,0,0" />
-        <Frame x:Name="PwdEntryFrame" Style="{StaticResource FrameStyle}">
-            <Grid ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
-                <!--Password Entry-->
-                <Entry Style="{StaticResource EntryStyle}" x:Name="PwdEntry" Placeholder="Enter password" MaxLength="12" IsPassword="True" TextChanged="OnPasswordTextChanged"/>
-
-                <!--Password Reveal Button-->
-                <ImageButton x:Name="PasswordRevealButton" 
+                    <!--Password Reveal Button-->
+                    <ImageButton x:Name="PasswordRevealButton" 
                      Source="eye_image_close.png"
                      Clicked="OnPasswordRevealButtonClicked"
                      HeightRequest="30"
                      WidthRequest="30"
                      BackgroundColor="Transparent" 
                      HorizontalOptions="End" />
-            </Grid>
-        </Frame>
-        <Label x:Name="LengthCriteria" Text="At least 8 characters" TextColor="Red" FontSize="Small"/>
-        <Label x:Name="NumberCriteria" Text="Contains at least one number" TextColor="Red" FontSize="Small"/>
-        <Label x:Name="SpecialCharCriteria" Text="Contains at least one special character" TextColor="Red" FontSize="Small"/>
-        <Label x:Name="UpperCaseCriteria" Text="Contains at least one uppercase letter" TextColor="Red" FontSize="Small"/>
+                </Grid>
+            </Frame>
+            <StackLayout x:Name="PasswordCriteriaStacklayout" IsVisible="False">
+                <Label x:Name="LengthCriteria" Text="At least 8 characters" TextColor="Red" FontSize="Small"/>
+                <Label x:Name="NumberCriteria" Text="Contains at least one number" TextColor="Red" FontSize="Small"/>
+                <Label x:Name="SpecialCharCriteria" Text="Contains at least one special character" TextColor="Red" FontSize="Small"/>
+                <Label x:Name="UpperCaseCriteria" Text="Contains at least one uppercase letter" TextColor="Red" FontSize="Small"/>
+            </StackLayout>
 
-        <Label Text="Confirm Password" FontSize="Medium" Padding="5,10,0,0" />
-        <Frame x:Name="PwdConfirmEntryFrame" Style="{StaticResource FrameStyle}">
-            <Grid ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
-                <Entry Style="{StaticResource EntryStyle}" x:Name="PwdConfirmEntry" Placeholder="Confirm password" MaxLength="12"  IsPassword="True" TextChanged="OnConfirmPwdTextChanged"/>
+            <Label Text="Confirm Password" FontSize="Medium" Padding="5,10,0,0" />
+            <Frame x:Name="PwdConfirmEntryFrame" Style="{StaticResource FrameStyle}">
+                <Grid ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
+                    <Entry Style="{StaticResource EntryStyle}" x:Name="PwdConfirmEntry" Placeholder="Confirm password" MaxLength="12"  IsPassword="True" TextChanged="OnConfirmPwdTextChanged"/>
 
-                <ImageButton x:Name="ConfirmPasswordRevealButton" 
+                    <ImageButton x:Name="ConfirmPasswordRevealButton" 
                      Source="eye_image_close.png"
                      Clicked="OnConfirmPasswordRevealButtonClicked"
                      HeightRequest="30"
                      WidthRequest="30"
                      BackgroundColor="Transparent" 
                      HorizontalOptions="End" />
-            </Grid>
-        </Frame>
+                </Grid>
+            </Frame>
 
-        <Button x:Name="RegisterButton"
+            <Button x:Name="RegisterButton"
             Text="Sign Up"
             TextColor="Black"
             FontSize="16"
@@ -91,20 +79,26 @@
             IsEnabled="False"
             Padding="20"
             Margin="20">
-        </Button>
+            </Button>
 
-        <ActivityIndicator x:Name="RegistrationInProgressIndicator" Style="{StaticResource LoadingIndicatorStyle}" />
+            <ActivityIndicator x:Name="RegistrationInProgressIndicator" Style="{StaticResource LoadingIndicatorStyle}" />
 
-        <!--For now this should not be needed since I will be restricting account creation
+            <ContentView ControlTemplate="{StaticResource FooterTemplate}" />
+
+            <!--For now this should not be needed since I will be restricting account creation
         to one account per device. In the future, this will definitely change-->
-        <!--<Label Text="Already have an account? Log in" FontSize="Small" HorizontalTextAlignment="Center" Padding="5,0,0,0" />
+            <!--<Label Text="Already have an account? Log in" FontSize="Small" HorizontalTextAlignment="Center" Padding="5,0,0,0" />
         <Label HorizontalTextAlignment="Center" Padding="5,0,0,0" FontSize="Small">
             <Label.FormattedText>
                 <FormattedString>
-                    --><!-- Static text part --><!--
+                    -->
+            <!-- Static text part -->
+            <!--
                     <Span Text="Already have an account? " />
 
-                    --><!-- Clickable "Log In" link --><!--
+                    -->
+            <!-- Clickable "Log In" link -->
+            <!--
                     <Span Text="Log in" TextColor="Blue" TextDecorations="Underline">
                         <Span.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnLoginTapped" />
@@ -114,5 +108,6 @@
             </Label.FormattedText>
         </Label>-->
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

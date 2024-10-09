@@ -19,6 +19,24 @@ namespace JusGiveaway
             await button.ScaleTo(1, 100);
         }
 
+        public static async Task AnimateButton(ImageButton button)
+        {
+            await button.ScaleTo(1.15, 100);
+            await button.ScaleTo(1, 100);
+        }
+
+        public static async Task AnimateSpan(Label label)
+        {
+            // Save the original scale
+            double originalScale = label.Scale;
+
+            // Animate the label to 1.5 times its original scale
+            await label.ScaleTo(1.5, 250, Easing.CubicInOut);
+
+            // Animate back to the original scale
+            await label.ScaleTo(originalScale, 250, Easing.CubicInOut);
+        }
+
         public static async Task<Dictionary<string, string>> GetGameDataFromFirebaseAsync(FirebaseClient firebaseClient)
         {
             try
@@ -60,23 +78,94 @@ namespace JusGiveaway
             activityIndicator.IsRunning = !activityIndicator.IsRunning;
         }
 
-        public static int GetGameWinMonetaryValue(Dictionary<string, string> giveawayData)
+        public static async Task<double> GetRemainingGiveawayFundsAsync(FirebaseClient firebaseClient)
         {
-            return int.Parse(giveawayData["GameWinMonetaryValue"]);
-        }
-        public static int GetGameLossMonetaryValue(Dictionary<string, string> giveawayData)
-        {
-            return int.Parse(giveawayData["GameLossMonetaryValue"]);
+            // Read updated values from the Firebase Realtime Database
+            var firebaseGiveawayData = await GetGameDataFromFirebaseAsync(firebaseClient);
+
+            if (firebaseGiveawayData == null)
+            {
+                return 0;
+            }
+
+            return double.Parse(firebaseGiveawayData["LeftoverGiveawayFunds"]);
         }
 
+        public static int GetRoundSmallLossMonetaryValue(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["RoundSmallLossMonetaryValue"]);
+        }
+        public static int GetRoundBigLossMonetaryValue(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["RoundBigLossMonetaryValue"]);
+        }
+        public static int GetRoundSmallWinMonetaryValue(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["RoundSmallWinMonetaryValue"]);
+        }
+        public static int GetRoundBigWinMonetaryValue(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["RoundBigWinMonetaryValue"]);
+        }
+        public static int GetRoundDrawMonetaryValue(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["RoundDrawMonetaryValue"]);
+        }
         public static int GetLeftoverGiveawayFunds(Dictionary<string, string> giveawayData)
         {
             return int.Parse(giveawayData["LeftoverGiveawayFunds"]);
+        }
+        public static int GetMinCashoutPerPerson(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["MinCashoutPerPerson"]);
         }
 
         public static int GetTotalResetsAllowed(Dictionary<string, string> giveawayData)
         {
             return int.Parse(giveawayData["TotalResetsAllowed"]);
+        }
+
+        public static int GetMonetaryResetPenalty(Dictionary<string, string> giveawayData)
+        {
+            return int.Parse(giveawayData["MonetaryResetPenalty"]);
+        }
+
+        public static void RemovePagesFromNavigationStack(INavigation navigation)
+        {
+            // Remove the previous page(s) from the navigation stack
+            // this will prevent the back button going back to unwanted pages
+            var existingPages = navigation.NavigationStack.ToList();
+            var lastPage = navigation.NavigationStack.Last();
+            foreach (var page in existingPages)
+            {
+                // Remove all pages except the most recent
+                if (page != lastPage)
+                {
+                    navigation.RemovePage(page);
+                }
+            }
+        }
+
+        // General method to animate both increment and decrement
+        public static async void AnimateLabelChange(Label numberLabel, int startValue, int endValue, int duration = 2000)
+        {
+            int stepDuration = 20; // Duration between each step (in milliseconds)
+            int steps = duration / stepDuration; // Total number of steps for the animation
+
+            // Calculate increment/decrement value per step based on whether we are incrementing or decrementing
+            double incrementValue = (double)(endValue - startValue) / steps;
+            double currentValue = startValue;
+
+            // Perform the animation in a loop
+            for (int i = 0; i < steps; i++)
+            {
+                currentValue += incrementValue; // Increment/decrement the value
+                numberLabel.Text = $"N{currentValue.ToString("N0")}"; // Update the label text
+                await Task.Delay(stepDuration); // Wait for the next step
+            }
+
+            // Set the final value to ensure precision
+            numberLabel.Text = $"N{endValue.ToString("N0")}";
         }
     }
 

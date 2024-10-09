@@ -6,9 +6,6 @@
              Title="HeadsOrTails"
              NavigationPage.HasNavigationBar="False">
 
-    <!--<ContentPage.BackgroundImageSource>
-        <FileImageSource File="mint_green_bckg.jpg" />
-    </ContentPage.BackgroundImageSource>-->
     <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Padding="20,40,20,20">
 
         <!--<Frame x:Name="Header" BackgroundColor="#f5f5f5" CornerRadius="10"
@@ -18,20 +15,16 @@
             </StackLayout>
         </Frame>-->
 
-        <Image Source="logo_green.png" 
-            WidthRequest="50" 
-            HeightRequest="50" 
-            Aspect="AspectFill" 
-            HorizontalOptions="Center" 
-            VerticalOptions="Start" 
-            Margin="10,0,10,30"/>
-
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <!-- First row -->
                 <RowDefinition Height="Auto" />
                 <!-- Second row -->
+                <RowDefinition Height="Auto" />
+                <!-- Third row -->
+                <RowDefinition Height="Auto" />
+                <!-- Fourth row -->
             </Grid.RowDefinitions>
             
             <Grid.ColumnDefinitions>
@@ -62,7 +55,7 @@
             <!-- Giveaway Info -->
             <StackLayout Grid.Row="0" Grid.Column="1" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
                 <Label Text="Givaway Balance" FontSize="16" HorizontalOptions="End" VerticalOptions="Center" Margin="0,2,0,0" />
-                <Label x:Name="TotalGiveawayFundsLabel" Text="N-------" FontSize="18" FontAttributes="Bold" 
+                <Label x:Name="TotalGiveawayFundsLabel" Text="N0" FontSize="18" FontAttributes="Bold" 
                        HorizontalOptions="End" VerticalOptions="Center" TextColor="#348C31"/>
                 <Label FontSize="10.5" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,0,10">
                     <Label.FormattedText>
@@ -80,7 +73,7 @@
             <!-- Second row content -->
             <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Padding="0,10,0,0">
                 <Label Text="Maximum Win" FontSize="16" />
-                <Label x:Name="TotalPossibleWinningsLabel" Text="N-----" FontAttributes="Bold" TextColor="#348C31" />
+                <Label x:Name="TotalPossibleWinningsLabel" Text="N0" FontAttributes="Bold" TextColor="#348C31" />
             </StackLayout>
 
 
@@ -89,6 +82,13 @@
                 <Label x:Name="PotentialWinningLabel" Text="N0" FontAttributes="Bold" VerticalOptions="Center" 
                        HorizontalOptions="End" TextColor="#348C31" />
             </StackLayout>
+
+            <!-- Container for the hearts in the third row, centered -->
+            <StackLayout x:Name="ResetCountVisualization" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="Center" Padding="0,10,0,0">
+                <!-- Holds heart icons representing retries left -->
+            </StackLayout>
+            <Label x:Name="ResetCountHintLabel" Text=" resets left" IsVisible="True" FontSize="Small" TextColor="Transparent" HorizontalOptions="Center" 
+                   Grid.Row="3" Grid.ColumnSpan="2" Padding="0"/>
         </Grid>
 
 
@@ -146,50 +146,84 @@
             </StackLayout>
 
             <!-- Coin Flip Section -->
-            <StackLayout x:Name="CoinFlipLayout" Orientation="Vertical" Spacing="20" IsVisible="false">
-                <Image x:Name="CoinImage" Source="kobo_front.png" HeightRequest="120" WidthRequest="120" Aspect="AspectFill">
+            <StackLayout x:Name="CoinFlipLayout" Orientation="Vertical" Spacing="10" IsVisible="false">
+                <Image x:Name="CoinImage" Source="kobo_front.png" HeightRequest="130" WidthRequest="130" Aspect="AspectFill">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnCoinTapped" />
                     </Image.GestureRecognizers>
                 </Image>
                 <Label x:Name="TotalLabel" Text="Total Flips: 0" FontSize="16" HorizontalOptions="Center" />
 
-                <StackLayout Orientation="Horizontal" Spacing="20" HorizontalOptions="Center">
-                    <StackLayout VerticalOptions="CenterAndExpand">
-                        <Label x:Name="HeadsProgressBarLabel" Text="Heads" FontSize="14" HorizontalOptions="Center"/>
-                        <ProgressBar x:Name="HeadsProgressBar" Progress="0" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" ProgressColor="Green" />
-                        <Label x:Name="HeadsPercentageLabel" FontSize="14" VerticalOptions="CenterAndExpand"/>
-                    </StackLayout>
+                <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Padding="0">
+                    <!-- Grid Layout to Organize the Bars and Labels -->
+                    <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" VerticalOptions="Center" HorizontalOptions="Center">
 
-                    <StackLayout VerticalOptions="CenterAndExpand">
-                        <Label x:Name="TailsProgressBarLabel" Text="Tails" FontSize="14" HorizontalOptions="Center"/>
-                        <ProgressBar x:Name="TailsProgressBar" Progress="0" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" ProgressColor="Orange" />
-                        <Label x:Name="TailsPercentageLabel" FontSize="14" VerticalOptions="CenterAndExpand"/>
-                    </StackLayout>
+                        <!-- Heads Column -->
+                        <Grid Grid.Column="0" VerticalOptions="End">
+                            <StackLayout>
+                                <!-- Fixed Height Container for the Heads Bar -->
+                                <Frame x:Name="HeadsBarFrame" WidthRequest="60" HeightRequest="100" Padding="0" VerticalOptions="End" Margin="2">
+                                    <!-- Bar for Heads -->
+                                    <BoxView x:Name="HeadsBar" 
+                                         WidthRequest="60" 
+                                         VerticalOptions="End" 
+                                         Color="DarkOliveGreen" 
+                                         HeightRequest="0" />
+                                </Frame>
+
+                                <!-- Heads Count and Percentage Label (Positioned Below the Bar) -->
+                                <Label 
+                                   Text="Heads" 
+                                   FontSize="14" 
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Start" 
+                                   Grid.Row="1" />
+                                <Label x:Name="HeadsCountLabel" Text="0" FontSize="14" HorizontalOptions="Center"/>
+                            </StackLayout>
+                        </Grid>
+
+                        <!-- Tails Column -->
+                        <Grid Grid.Column="1" VerticalOptions="End">
+                            <StackLayout>
+                                <!-- Fixed Height Container for the Tails Bar -->
+                                <Frame x:Name="TailsBarFrame" WidthRequest="60" HeightRequest="100" Padding="0" VerticalOptions="End" Margin="2">
+                                    <!-- Bar for Tails -->
+                                    <BoxView x:Name="TailsBar" 
+                                         WidthRequest="60" 
+                                         VerticalOptions="End" 
+                                         Color="Orange" 
+                                         HeightRequest="0" />
+                                </Frame>
+
+                                <!-- Tails Count and Percentage Label (Positioned Below the Bar) -->
+                                <Label 
+                                   Text="Tails" 
+                                   FontSize="14" 
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Start" 
+                                   Grid.Row="1" />
+                                <Label x:Name="TailsCountLabel" Text="0" FontSize="14" HorizontalOptions="Center"/>
+                            </StackLayout>
+                        </Grid>
+                    </Grid>
                 </StackLayout>
 
-                <StackLayout HorizontalOptions="Start" Padding="5" BackgroundColor="Black">
-                    <GraphicsView x:Name="headsTailsBarH" HorizontalOptions="Center">
-                        <GraphicsView.Drawable>
-                            <local:CustomBarGraphDrawable x:Name="headsTailsBar" EvenPercentage="0.5" OddPercentage="0.5"/>
-                        </GraphicsView.Drawable>
-                    </GraphicsView>
-                </StackLayout>
-
-                <Label x:Name="ScoreLabel" Text="Score: 0" FontSize="18" HorizontalOptions="Center" FontAttributes="Bold" />
-
+                <Label FontSize="20" HorizontalOptions="Center" FontAttributes="Bold">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Score: " TextColor="Black"/>
+                            <Span x:Name="ScoreLabel" Text="0" TextColor="Black"/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
 
                 <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-                    <!--<Button x:Name="CashOutButton" Text="Cash Out" Clicked="OnCashOutClicked" 
-                            FontSize="16" HorizontalOptions="Center" IsEnabled="false" 
-                            CornerRadius="20" BackgroundColor="Green" BorderWidth="2" Padding="20"/>-->
-
                     <Button x:Name="CashOutButton"
                             Text="Cash Out"
                             TextColor="White"
                             BackgroundColor="Green"
                             Clicked="OnCashOutClicked"
-                            IsVisible="true"
+                            IsVisible="False"
                             Style="{StaticResource CustomButtonStyle}">
                     </Button>
 

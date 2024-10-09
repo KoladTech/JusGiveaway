@@ -20,14 +20,6 @@ public partial class RegistrationPage : ContentPage
 		InitializeComponent();
         dbHelper = new();
 
-        //var customDrawable = new CustomBarGraphDrawable(0.2f, 0.4f);
-        //var graphicsView = new GraphicsView
-        //{
-        //    Drawable = customDrawable
-        //};
-
-        //Content = graphicsView;
-
         // Check if the code has been run before
         if (!Preferences.ContainsKey("SQLiteDBCreated"))
         {
@@ -46,6 +38,12 @@ public partial class RegistrationPage : ContentPage
             // Set a flag indicating that the code has been executed
             Preferences.Set("SQLiteDBCreated", true);
         }
+
+        // Attach event handlers for each Entry control in the form
+        NameEntry.Focused += OnEntryFocused;
+        EmailEntry.Focused += OnEntryFocused;
+        PwdEntry.Focused += OnEntryFocused;
+        PwdConfirmEntry.Focused += OnEntryFocused;
     }
 
     private Dictionary<string, string> getPhoneInfo()
@@ -256,5 +254,21 @@ public partial class RegistrationPage : ContentPage
             if (!emailRegex.IsMatch(EmailEntry.Text))
                 return false;
         return true; 
+    }
+
+    // Method to handle the focus event and scroll the view
+    private void OnEntryFocused(object sender, FocusEventArgs e)
+    {
+        var entry = sender as Entry;
+        if (entry != null)
+        {
+            // Add some padding to bring whole form into view
+            RegistrationPageVerticalStackLayout.Padding = new Thickness(20, 20, 20, 350);
+        }
+
+        if(entry == PwdEntry)
+        {
+            PasswordCriteriaStacklayout.IsVisible = true;
+        }
     }
 }

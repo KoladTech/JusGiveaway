@@ -1,11 +1,7 @@
-﻿
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="JusGiveaway.MainPage"
              NavigationPage.HasNavigationBar="False">
-    <!--<ContentPage.BackgroundImageSource>
-        <FileImageSource File="mint_green_bckg.jpg" />
-    </ContentPage.BackgroundImageSource>-->
     <VerticalStackLayout VerticalOptions="CenterAndExpand" Padding="10">
         <Grid Margin="0,0,0,50">
             <Grid.RowDefinitions>
@@ -41,22 +37,6 @@
         </Grid>
 
         <Label Text="Games" FontSize="26" FontAttributes="Bold" TextColor="#008000" Padding="10" />
-
-        <!--<VerticalStackLayout HorizontalOptions="Center">
-            <Button x:Name="HeadsOrTailsGameButton"
-                Text="Heads Or Tails"
-                TextColor="White"
-                FontSize="20"
-                BackgroundColor="#468fa2"
-                CornerRadius="20"
-                BorderColor="#fffff0"
-                BorderWidth="2"
-                Clicked="OnHeadsOrTailsGameButtonClicked"
-                IsEnabled="True"
-                Padding="20"
-                Margin="10">
-            </Button>
-        </VerticalStackLayout>-->
 
         <Grid VerticalOptions="EndAndExpand">
             <Grid.RowDefinitions>
@@ -115,6 +95,16 @@
                 </StackLayout>
             </Frame>
         </Grid>
+
+        <!--Logout Button-->
+        <ImageButton x:Name="LogoutButton" 
+            Source="logout_icon.png"
+            Margin="0,10"
+            Clicked="LogoutButton_Clicked"
+            HeightRequest="60"
+            WidthRequest="60"
+            BackgroundColor="Transparent" 
+            HorizontalOptions="End" />
 
         <ActivityIndicator x:Name="MainPageProgressIndicator" Style="{StaticResource LoadingIndicatorStyle}" />
     </VerticalStackLayout>

@@ -6,15 +6,15 @@
              BackgroundColor="Transparent">
     <!-- Content of your modal alert -->
     <ContentView BackgroundColor="Transparent" Padding="20" VerticalOptions="Center">
-        <Frame CornerRadius="10" BackgroundColor="White" Padding="20">
+        <Frame CornerRadius="10" BackgroundColor="White" Padding="20" HasShadow="True" BorderColor="Green">
             <StackLayout>
-                <Label Text="{Binding AlertTitle}" FontSize="20" HorizontalOptions="Center" Margin="0,0,0,10"/>
+                <Label Text="{Binding AlertTitle}" FontSize="20" HorizontalOptions="Center" Margin="0,0,0,10" FontAttributes="Bold"/>
                 <Label Text="{Binding AlertMessage}" FontSize="16" HorizontalOptions="Center" Margin="0,0,0,20"/>
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
                     <Button Text="{Binding PrimaryBtnText}" Clicked="OnYesClicked" IsVisible="{Binding ShowPrimaryBtn}" 
-                            BackgroundColor="{Binding PrimaryButtonColor}" FontSize="16" HorizontalOptions="FillAndExpand" />
+                            BackgroundColor="{Binding PrimaryButtonColor}" FontSize="16" HorizontalOptions="CenterAndExpand" />
                     <Button Text="{Binding SecondaryBtnText}" Clicked="OnNoClicked" IsVisible="{Binding ShowSecondaryBtn}"
-                            BackgroundColor="{Binding SecondaryButtonColor}" FontSize="16" HorizontalOptions="FillAndExpand" />
+                            BackgroundColor="{Binding SecondaryButtonColor}" FontSize="16" HorizontalOptions="CenterAndExpand" />
                 </StackLayout>
             </StackLayout>
         </Frame>

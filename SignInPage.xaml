@@ -4,11 +4,11 @@
              x:Class="JusGiveaway.SignInPage"
              Title="SignInPage"
              NavigationPage.HasNavigationBar="False">
-    <!--<ContentPage.BackgroundImageSource>
-        <FileImageSource File="mint_green_bckg.jpg" />
-    </ContentPage.BackgroundImageSource>-->
-    <VerticalStackLayout VerticalOptions="CenterAndExpand" Padding="20">
-        <Image Source="logo_green.png" 
+
+    <!-- ScrollView to handle keyboard overlap -->
+    <ScrollView VerticalOptions="FillAndExpand">
+        <VerticalStackLayout x:Name="SignInPageVerticalStackLayout" VerticalOptions="StartAndExpand" Padding="20">
+            <Image Source="logo_green.png" 
             WidthRequest="50" 
             HeightRequest="50" 
             Aspect="AspectFill" 
@@ -16,36 +16,36 @@
             VerticalOptions="Start" 
             Margin="10"/>
 
-        <Label Text="Sign In" FontSize="26" FontAttributes="Bold" HorizontalOptions="Start" TextColor="#348C31" Padding="5,10,10,10" />
-        <Label Text="Enter your password..." FontSize="Micro" Padding="5,0,0,10" />
+            <Label Text="Sign In" FontSize="26" FontAttributes="Bold" HorizontalOptions="Start" TextColor="#348C31" Padding="5,10,10,10" />
+            <Label Text="Enter your password..." FontSize="Micro" Padding="5,0,0,10" />
 
-        <Label Text="Email" FontSize="Medium" Padding="5,10,0,0" />
-        <Frame x:Name="SignInEmailEntryFrame" Style="{StaticResource FrameStyle}">
-            <Entry Style="{StaticResource EntryStyle}" x:Name="SignInEmailEntry" Placeholder="Enter email" Keyboard="Email" TextChanged="OnSignInEmailTextChanged" IsEnabled="False"/>
-        </Frame>
+            <Label Text="Email" FontSize="Medium" Padding="5,10,0,0" />
+            <Frame x:Name="SignInEmailEntryFrame" Style="{StaticResource FrameStyle}">
+                <Entry Style="{StaticResource EntryStyle}" x:Name="SignInEmailEntry" Placeholder="Enter email" Keyboard="Email" TextChanged="OnSignInEmailTextChanged" IsEnabled="False"/>
+            </Frame>
 
-        <Label Text="Password" FontSize="Medium" Padding="5,10,0,0" />
-        <Frame x:Name="SignInPwdEntryFrame" Style="{StaticResource FrameStyle}">            
-            <Grid ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
-                <!--Password Entry-->
-                <Entry Style="{StaticResource EntryStyle}" 
+            <Label Text="Password" FontSize="Medium" Padding="5,10,0,0" />
+            <Frame x:Name="SignInPwdEntryFrame" Style="{StaticResource FrameStyle}">
+                <Grid ColumnDefinitions="*,Auto" HorizontalOptions="FillAndExpand">
+                    <!--Password Entry-->
+                    <Entry Style="{StaticResource EntryStyle}" 
                        x:Name="SignInPwdEntry" 
                        Placeholder="Enter password" 
                        IsPassword="True" 
                        TextChanged="OnSignInPasswordTextChanged" HorizontalOptions="FillAndExpand"/>
 
-                <!--Password Reveal Button-->
-                <ImageButton x:Name="PasswordRevealButton" 
+                    <!--Password Reveal Button-->
+                    <ImageButton x:Name="PasswordRevealButton" 
                      Source="eye_image_close.png"
                      Clicked="OnPasswordRevealButtonClicked"
                      HeightRequest="30"
                      WidthRequest="30"
                      BackgroundColor="Transparent" 
                      HorizontalOptions="End" />
-            </Grid>
-        </Frame>
+                </Grid>
+            </Frame>
 
-        <Button x:Name="SignInButton"
+            <Button x:Name="SignInButton"
             Text="Sign In"
             TextColor="White"
             FontSize="20"
@@ -57,13 +57,16 @@
             IsEnabled="False"
             Padding="20"
             Margin="20">
-        </Button>
+            </Button>
 
-        <ActivityIndicator x:Name="SignInProgressIndicator" Style="{StaticResource LoadingIndicatorStyle}" />
+            <ActivityIndicator x:Name="SignInProgressIndicator" Style="{StaticResource LoadingIndicatorStyle}" />
 
-        <!--For now this should not be needed since I will be restricting account creation
+            <ContentView ControlTemplate="{StaticResource FooterTemplate}" />
+
+            <!--For now this should not be needed since I will be restricting account creation
         to one account per device. In the future, this will definitely change-->
-        <!--<Label Text="Don't have an account? Sign Up" FontSize="Small" HorizontalTextAlignment="Center" Padding="5,0,0,0" />-->
+            <!--<Label Text="Don't have an account? Sign Up" FontSize="Small" HorizontalTextAlignment="Center" Padding="5,0,0,0" />-->
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
